@@ -43,8 +43,9 @@ newRestForm.addEventListener('submit', e => {
 
 //Preview of the image
 newRestForm.image.addEventListener('change', e => {
+  let imgPrw = document.querySelector("#imgPreview")
   if (document.querySelector("#image").value == '') {
-    document.querySelector("#imgPreview").className = "img-thumbnail d-none mb-3"
+    imgPrw.className = "img-thumbnail d-none mb-3"
   }
   if(e.target.files.length) { 
     // If there's a at least one file selected
@@ -55,10 +56,9 @@ newRestForm.image.addEventListener('change', e => {
       reader.readAsDataURL(file); // Read in base64
   
       reader.addEventListener('load', e => {
-        imageBase64 = reader.result
-        document.querySelector("#imgPreview").src = imageBase64
+        imgPrw.src = reader.result
         // We preview the image inside a <img> element in the HTML
-        document.querySelector("#imgPreview").className = "img-thumbnail mb-3";
+        imgPrw.className = "img-thumbnail mb-3";
       });
     }
   }
@@ -253,10 +253,10 @@ function resetForm(){
 
   //Deleting all invalid & valid class and reseting values
   for (let elem of document.getElementsByClassName("form-control")) {
-    elem.classList.remove("is-valid");
-    elem.classList.remove("is-invalid");
+    elem.classList.remove("is-valid", "is-invalid");
     elem.value = "";
   }
+  //newRestForm.reset();
   
   
 }
