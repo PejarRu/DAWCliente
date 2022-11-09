@@ -23,8 +23,6 @@ export class RestaurantService {
     //Will call http://SERVER/restaurants using ‘DELETE’, and return empty response if OK
     delete(id) {
         console.log("Deliting: "  + id);
-        let response = this.dbConnection.delete(SERVER+TABLE+"/"+id)
-        console.log(response)
-        return response
+        return this.dbConnection.delete(SERVER+TABLE+"/"+id)
     }
 }

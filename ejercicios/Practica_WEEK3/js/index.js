@@ -3,6 +3,28 @@ import { RestaurantService } from "./restaurant-service.class.js";
 import { WEEKDAYS, SERVER } from "./constants.js";
 
 let restaurantService = new RestaurantService();
+showRestaurants();
+
+//OPTIONAL: Search cards
+let searchInput = document.querySelector("input.form-control");
+searchInput.addEventListener("input", searchCards)
+
+async function searchCards(e){
+    e.preventDefault();
+    let input = e.target.value
+    let regex = /\S/g
+    //If search input is not empty
+    if (regex.test(input)) {
+        let restaurantsArray = await loadData()
+        let newData = restaurantsArray.filter((rest) => {
+            return rest.name.toLowerCase().includes(input.toLowerCase()) || 
+            rest.description.toLowerCase().includes(input.toLowerCase())
+        })
+        showRestaurants(newData)
+    }else {
+        showRestaurants()
+    }
+}
 
 //Devuelve objeto con un array de objetos restaurante
 async function loadData(){
@@ -11,20 +33,23 @@ async function loadData(){
 }
 
 //Delete card by id
-function deleteCard(event){
+async function deleteCard(event){
     let id = event.target.parentElement.parentElement.parentElement.id
     restaurantService.delete(id);
-    loadData()
+
+    await loadData()
+
     showRestaurants()
 }
 
-showRestaurants();
 
 //Shows all restaurants from array
-async function showRestaurants() {
-    let restaurants = await loadData()
+async function showRestaurants(restaurants) {
+    if (restaurants === undefined) {
+        restaurants = await loadData()
+    }
     //Just show the id of all restauants
-    console.log("Showing ID restaurants: " + restaurants.map(r => r.id).join("; "));
+    console.log("Showing ID restaurants: " + restaurants.map(r => r.id).join(", "));
     
     //Deleting all previuous HTML
     let container = document.getElementById("placesContainer");
@@ -48,7 +73,7 @@ async function showRestaurants() {
             let daysOpen = restaurant.daysOpen
             let phone = restaurant.phone
             let image = restaurant.image
-            let cuisine = restaurant
+            let cuisine = restaurant.cuisine
 
 
             let col = document.createElement("div");

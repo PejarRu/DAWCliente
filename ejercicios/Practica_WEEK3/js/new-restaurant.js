@@ -76,7 +76,7 @@ async function validateForm(event) {
         //Will call http://SERVER/restaurants using ‘POST’, and send the received restaurant.
         await restaurantService.post(newRestaurant);
 
-        location.assign("index.html")
+        location.assign("./index.html")
 
         /* This code is obsolete as we are redirected to index.html
         formRestaurant.reset();
