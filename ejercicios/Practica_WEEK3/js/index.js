@@ -35,11 +35,12 @@ async function loadData(){
 //Delete card by id
 async function deleteCard(event){
     let id = event.target.parentElement.parentElement.parentElement.id
-    restaurantService.delete(id);
-
-    await loadData()
-
-    showRestaurants()
+    let name = event.target.nextElementSibling.textContent
+    if (confirm(`Do you want to delete ${name}?`)) {
+        restaurantService.delete(id);
+        await loadData()
+        showRestaurants()
+    } 
 }
 
 
