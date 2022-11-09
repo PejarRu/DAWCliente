@@ -24,7 +24,8 @@ showRestaurants();
 async function showRestaurants() {
     let restaurants = await loadData()
     //Just show the id of all restauants
-    console.log("Loaded restaurants: " + restaurants.map(r => r.id).join("; "));
+    console.log("Showing ID restaurants: " + restaurants.map(r => r.id).join("; "));
+    
     //Deleting all previuous HTML
     let container = document.getElementById("placesContainer");
     container.innerHTML = "";
@@ -104,12 +105,9 @@ async function showRestaurants() {
             cardDays.append(openBadge);
             
             if (daysOpen.toString().includes(new Date().getDay())) {
-                console.log("TRE");
                 openBadge.innerText = "Open";
                 openBadge.classList.add("bg-success");
             } else {
-                console.log("FLS");
-
                 openBadge.innerText = "Closed";
                 openBadge.classList.add("bg-danger");
             }
