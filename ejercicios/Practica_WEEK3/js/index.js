@@ -2,48 +2,45 @@
 import { RestaurantService } from "./restaurant-service.class.js";
 import { WEEKDAYS, SERVER } from "./constants.js";
 
-let restaurantService;
-let data;
-let restaurants;
+let restaurantService = new RestaurantService();
 
-restaurantService = new RestaurantService();
-
+//Devuelve objeto con un array de objetos restaurante
 async function loadData(){
-    data = await restaurantService.getAll();
+    let data = await restaurantService.getAll();
     return data.restaurants
 }
- showRestaurants()
 
 //Delete card by id
 function deleteCard(event){
     let id = event.target.parentElement.parentElement.parentElement.id
-    console.log("Deleting " + id);
     restaurantService.delete(id);
     loadData()
     showRestaurants()
 }
 
+showRestaurants();
+
 //Shows all restaurants from array
 async function showRestaurants() {
-    restaurants = await loadData()
-    console.log(data);
-    console.log(restaurants);
+    let restaurants = await loadData()
+    //Just show the id of all restauants
+    console.log("Loaded restaurants: " + restaurants.map(r => r.id).join("; "));
     //Deleting all previuous HTML
     let container = document.getElementById("placesContainer");
     container.innerHTML = "";
 
     //Iterrating array
     restaurants.forEach(restaurant => {
-        console.log("a");
-        let requiredKeys = ["id", "name", "description", "daysOpen", "phone", "image", "cuisine"];
         //VALIDATION: Checking if passed array contains a restaurant object propeties
+        let requiredKeys = ["id", "name", "description", "daysOpen", "phone", "image", "cuisine"];
         for (const key in restaurant) {
             if (requiredKeys.includes(key)) {
                 requiredKeys[requiredKeys.indexOf(key)] = true;
             }
         }
+        //Id validation OK, Creating DOM elements for each RESTAURANT - START
         if (requiredKeys.every(k => k == true)) {
-            //Creating DOM elements for each RESTAURANT - START
+
             //Restaurant variables from array
             let name = restaurant.name
             let description = restaurant.description
@@ -105,11 +102,14 @@ async function showRestaurants() {
             let openBadge = document.createElement("span");
             openBadge.classList.add("badge", "ms-2");
             cardDays.append(openBadge);
-
-            if (daysOpen.includes(new Date().getDay())) {
+            
+            if (daysOpen.toString().includes(new Date().getDay())) {
+                console.log("TRE");
                 openBadge.innerText = "Open";
                 openBadge.classList.add("bg-success");
             } else {
+                console.log("FLS");
+
                 openBadge.innerText = "Closed";
                 openBadge.classList.add("bg-danger");
             }
@@ -137,12 +137,8 @@ async function showRestaurants() {
             cardSmallCuisine.classList.add("text-muted");
             cardSmallCuisine.innerText = cuisine;
             cardFooter.append(cardSmallCuisine);
-
-            
             //Creating DOM elements for each RESTAURANT - END
-
         }
     });
-
 }
 

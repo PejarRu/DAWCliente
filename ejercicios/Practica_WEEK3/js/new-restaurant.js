@@ -1,6 +1,6 @@
 'use strict'
 import { RestaurantService } from "./restaurant-service.class.js";
-import { LOCAL } from "./constants.js";
+import { SERVER, TABLE } from "./constants.js";
 let restaurantService = new RestaurantService()
 
 //The JS up from here is the solution of Week2 exercise
@@ -56,26 +56,29 @@ function validateImage() {
     }
 }
 
-function validateForm(event) {
+async function validateForm(event) {
     event.preventDefault();
     let daysOpen =  Array.from(formRestaurant.days).filter(dc => dc.checked).map(dc => +dc.value);
-
-    let newRestaurant = {
-        "name":formRestaurant.name.value,
-        "description" : formRestaurant.description.value,
-        "daysOpen" : daysOpen,
-        "cuisine" : formRestaurant.cuisine.value,
-        "phone" : formRestaurant.phone.value,
-        "image" : imgPreview.src
-    }
 
     let validations = [validateName(), validateDescription(), validateCuisine(), validateDays(daysOpen), validatePhone(), validateImage()];
 
     if (validations.every(v => v === true)) { // Check all validations
+        //Create object to pass to SERVER
+        let newRestaurant = {
+            "name":formRestaurant.name.value,
+            "description" : formRestaurant.description.value,
+            "daysOpen" : daysOpen,
+            "cuisine" : formRestaurant.cuisine.value,
+            "phone" : formRestaurant.phone.value,
+            "image" : imgPreview.src
+        }
 
         //Will call http://SERVER/restaurants using ‘POST’, and send the received restaurant.
-        restaurantService.post(newRestaurant)
+        await restaurantService.post(newRestaurant);
 
+        location.assign("index.html")
+
+        /* This code is obsolete as we are redirected to index.html
         formRestaurant.reset();
         imgPreview.classList.add("d-none");
 
@@ -83,9 +86,10 @@ function validateForm(event) {
             input => input.classList.remove("is-valid", "is-invalid")
         );
         document.getElementById('daysError').classList.add('d-none');
+        */
 
-        alert("Validacion acabada. Deberia redirigir a index")
-        location.assign(LOCAL)
+       
+
     }
 }
 

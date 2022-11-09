@@ -17,13 +17,12 @@ export class RestaurantService {
     //Will call http://SERVER/restaurants using ‘POST’, and send the received restaurant.
     post(restaurant) {
         console.log("Posting")
-
         return this.dbConnection.post(SERVER+TABLE, restaurant);
     }
 
     //Will call http://SERVER/restaurants using ‘DELETE’, and return empty response if OK
     delete(id) {
-        console.log("del: "  + id);
+        console.log("Deliting: "  + id);
         let response = this.dbConnection.delete(SERVER+TABLE+"/"+id)
         console.log(response)
         return response
