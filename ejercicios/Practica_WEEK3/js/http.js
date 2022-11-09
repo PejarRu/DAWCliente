@@ -1,8 +1,10 @@
+'use strict'
 export class Http {
     async ajax(method, url, headers = {}, body = null) {
-        const resp = await fetch(url, { method, headers, body});
-        if(!resp.ok) throw new Error(resp.statusText);
-        if(resp.status != 204) {
+        const resp = await fetch(url, { method, headers, body });
+        if (!resp.ok) throw new Error(resp.statusText);
+
+        if (resp.status != 204) {
             return await resp.json(); // promise
         } else {
             return null;
