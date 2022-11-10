@@ -1,3 +1,5 @@
 _Soluciones
+*.zip
+*.rar
 node_modules
 /dist
