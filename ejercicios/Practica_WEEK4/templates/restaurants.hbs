@@ -1,0 +1,26 @@
+<div class="card h-100 shadow">
+    <img class="card-img-top" src="{{image}}">
+    <div class="card-body">
+        <button class="btn btn-danger btn-sm float-end">Delete</button>
+        <h4 class="card-title">{{name}}</h4>
+        <p class="card-text">{{description}}</p>
+        <div class="card-text">
+            <small class="text-muted">
+                <strong>Opens: </strong>{{daysStr}}
+            </small>
+            {{#if openBool}}
+            <span class="badge ms-2 bg-success">Open</span>
+            {{else}}
+            <span class="badge ms-2 bg-danger">Close</span>
+            {{/if}}
+        </div>
+        <div class="card-text">
+            <small class="text-muted">
+                <strong>Phone: </strong>{{phone}}
+            </small>
+        </div>
+    </div>
+    <div class="card-footer">
+        <small class="text-muted">{{cuisineStyle}}</small>
+    </div>
+</div>

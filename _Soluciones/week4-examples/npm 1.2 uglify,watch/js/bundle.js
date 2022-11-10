@@ -1,0 +1,1 @@
+function printNum(){return 2*(num=34)}function printNum(){return 2*(num=34)}alert("Hello World!"),printNum(),alert("Hello World!"),printNum();
