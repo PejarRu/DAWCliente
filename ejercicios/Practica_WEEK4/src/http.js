@@ -1,4 +1,4 @@
-'use strict'
+"use strict"
 export class Http {
   async ajax (method, url, headers = {}, body = null) {
     const resp = await fetch(url, { method, headers, body })
@@ -12,18 +12,18 @@ export class Http {
   }
 
   get (url) {
-    return this.ajax('GET', url)
+    return this.ajax("GET", url)
   }
 
   post (url, data) {
-    return this.ajax('POST', url, { 'Content-Type': 'application/json' }, JSON.stringify(data))
+    return this.ajax("POST", url, { "Content-Type": "application/json" }, JSON.stringify(data))
   }
 
   put (url, data) {
-    return this.ajax('PUT', url, { 'Content-Type': 'application/json' }, JSON.stringify(data))
+    return this.ajax("PUT", url, { "Content-Type": "application/json" }, JSON.stringify(data))
   }
 
   delete (url) {
-    return this.ajax('DELETE', url)
+    return this.ajax("DELETE", url)
   }
 }

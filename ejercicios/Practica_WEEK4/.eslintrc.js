@@ -11,5 +11,6 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "quotes": [4, "double", { "avoidEscape": true }]
     }
 }

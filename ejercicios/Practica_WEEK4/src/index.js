@@ -1,21 +1,21 @@
-'use strict'
-//HTTP(Ajax) 
-import { RestaurantService } from './restaurant-service.class.js'
-//Constants
-import { SERVER, WEEKDAYS } from './constants.js'
+"use strict"
+// HTTP(Ajax)
+import { RestaurantService } from "./restaurant-service.class.js"
+// Constants
+import { WEEKDAYS } from "./constants.js"
 
-//HANDLEBARS 
-import restaurantTemplate from '../templates/restaurants.hbs';
-//CSS & BOOTSTRAP
-import "../node_modules/bootstrap/dist/css/bootstrap.css";
-import css from '../styles.css'
+// HANDLEBARS
+import restaurantTemplate from "../templates/restaurants.hbs"
+// CSS & BOOTSTRAP
+import "../node_modules/bootstrap/dist/css/bootstrap.css"
+import "../styles.css"
 
 const restaurantService = new RestaurantService()
 showRestaurants()
 
 // ######### OPTIONAL: Search cards #########
-const searchInput = document.querySelector('input.form-control')
-searchInput.addEventListener('input', searchCards)
+const searchInput = document.querySelector("input.form-control")
+searchInput.addEventListener("input", searchCards)
 
 async function searchCards (e) {
   e.preventDefault()
@@ -41,7 +41,7 @@ async function loadData () {
     const data = await restaurantService.getAll()
     return data
   } catch (error) {
-    console.error("Error on loadData(): ", error);
+    console.error("Error on loadData(): ", error)
   }
 }
 
@@ -61,52 +61,52 @@ async function showRestaurants (restaurants) {
   if (restaurants === undefined) {
     restaurants = await loadData()
   }
-  
+
   // Deleting all previuous HTML
-  const container = document.getElementById('placesContainer')
-  container.innerHTML = ''
+  const container = document.getElementById("placesContainer")
+  container.innerHTML = ""
 
   // Creating DOM elements for each RESTAURANT - START
   restaurants.forEach(arrayElem => {
-    //If validation OK, Creating DOM elements for each RESTAURANT - START
+    // If validation OK, Creating DOM elements for each RESTAURANT - START
     if (isRestaurantObj(arrayElem)) {
-      //Create main div.col
-      const divCol = document.createElement('div')
-      divCol.classList.add('col')
-      divCol.setAttribute('id', arrayElem.id)
+      // Create main div.col
+      const divCol = document.createElement("div")
+      divCol.classList.add("col")
+      divCol.setAttribute("id", arrayElem.id)
       container.append(divCol)
 
-      console.log(arrayElem.image);
+      console.log(arrayElem.image)
 
       // SYNTAX USING HANDLEBARS
-      let restHTML = restaurantTemplate({
-        ...restaurant,
-        image:  `${arrayElem.image}`,
+      const restHTML = restaurantTemplate({
+        // ...restaurant,
+        image: `${arrayElem.image}`,
         name: arrayElem.name,
         description: arrayElem.description,
         phone: arrayElem.phone,
         cuisineStyle: arrayElem.cuisine,
-        daysStr: arrayElem.daysOpen.map(d => WEEKDAYS[d]).join(', '),
-        openBool: arrayElem.daysOpen.toString().includes(new Date().getDay()),
-      });
+        daysStr: arrayElem.daysOpen.map(d => WEEKDAYS[d]).join(", "),
+        openBool: arrayElem.daysOpen.toString().includes(new Date().getDay())
+      })
 
       divCol.innerHTML = restHTML
-      
+
       container.append(divCol)
-      
-      divCol.querySelector("button").addEventListener("click", deleteCard);
+
+      divCol.querySelector("button").addEventListener("click", deleteCard)
       // Creating DOM elements for each RESTAURANT - END
     }
   })
 }
 
-function isRestaurantObj(object){
-  const requiredKeys = ['id', 'name', 'description', 'daysOpen', 'phone', 'image', 'cuisine']
-    // VALIDATION: Checking if passed array contains a restaurant object propeties
-    for (const key in object) {
-      if (requiredKeys.includes(key)) {
-        requiredKeys[requiredKeys.indexOf(key)] = true
-      }
+function isRestaurantObj (object) {
+  const requiredKeys = ["id", "name", "description", "daysOpen", "phone", "image", "cuisine"]
+  // VALIDATION: Checking if passed array contains a restaurant object propeties
+  for (const key in object) {
+    if (requiredKeys.includes(key)) {
+      requiredKeys[requiredKeys.indexOf(key)] = true
     }
-    return requiredKeys.every(k => k === true)
+  }
+  return requiredKeys.every(k => k === true)
 }
