@@ -17,3 +17,11 @@ export interface Restaurant {
     lat: number;
     lng: number;
 }
+
+export interface RestaurantHbs extends Restaurant {
+    open: boolean;
+    days: string;
+    distance?: string;
+    fullStars: number[];
+    emptyStars: number[];
+}
