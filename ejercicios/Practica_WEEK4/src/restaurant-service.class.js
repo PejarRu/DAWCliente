@@ -1,30 +1,24 @@
-"use strict"
-import { Http } from "./http.js"
-import { SERVER, TABLE } from "./constants.js"
+import { Http } from "./http.js";
+import { SERVER } from "./constants.js";
 
 export class RestaurantService {
-  #dbConnection
-  constructor () {
-    this.#dbConnection = new Http()
-  }
+    #http;
 
-  // Will call http://SERVER/restaurants using ‘GET’ and return all restaurants.
-  async getAll () {
-    console.log("Getting")
-    const resp = await this.#dbConnection.get(`${SERVER}${TABLE}`)
-    return resp.restaurants
-  }
+    constructor() {
+        this.#http = new Http();
+    }
 
-  // Will call http://SERVER/restaurants using ‘POST’, and send the received restaurant.
-  async post (restaurant) {
-    console.log(`Posting ${restaurant.name}`)
-    const resp = await this.#dbConnection.post(SERVER + TABLE, restaurant)
-    return resp.restaurant
-  }
+    async getAll() {
+        const response = await this.#http.get(`${SERVER}/restaurants`);
+        return response.restaurants;
+    }
 
-  // Will call http://SERVER/restaurants using ‘DELETE’, and return empty response if OK
-  delete (id) {
-    console.log("Deliting: " + id)
-    return this.#dbConnection.delete(SERVER + TABLE + `/${id}`)
-  }
+    async post(restaurant) {
+        const response = await this.#http.post(`${SERVER}/restaurants`, restaurant);
+        return response.restaurant;
+    }
+
+    async delete(id) {
+        await this.#http.delete(`${SERVER}/restaurants/${id}`);
+    }
 }

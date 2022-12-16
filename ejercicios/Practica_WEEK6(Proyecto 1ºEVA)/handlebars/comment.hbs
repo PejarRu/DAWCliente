@@ -1,0 +1,26 @@
+<div>
+    <a href="profile.html?id={{user.id}}">
+        <img class="rounded-circle me-3" style="width: 40px;" src="{{user.avatar}}" alt="">
+    </a>
+</div>
+<div>
+    <div>
+        <strong>
+            <a href="profile.html?id={{user.id}}">
+            {{user.name}} 
+            </a>:
+        </strong>
+        {{text}}
+    </div>
+    <div>
+        {{#each fullStars}}
+            <span>★</span>
+        {{/each}}
+        {{#each emptyStars}}
+            <span>☆</span>
+        {{/each}}
+    </div>
+    <div>
+        <small>{{date}}</small>
+    </div>
+</div>

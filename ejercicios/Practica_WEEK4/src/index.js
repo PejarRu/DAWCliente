@@ -1,112 +1,63 @@
-"use strict"
-// HTTP(Ajax)
-import { RestaurantService } from "./restaurant-service.class.js"
-// Constants
-import { WEEKDAYS } from "./constants.js"
+import { RestaurantService } from "./restaurant-service.class.js";
 
-// HANDLEBARS
-import restaurantTemplate from "../templates/restaurants.hbs"
-// CSS & BOOTSTRAP
-import "../node_modules/bootstrap/dist/css/bootstrap.css"
-import "../styles.css"
+import "../node_modules/bootstrap/dist/css/bootstrap.css";
+import "../styles.css";
 
-const restaurantService = new RestaurantService()
-showRestaurants()
+import restTemplate from "./../templates/restaurant.hbs";
 
-// ######### OPTIONAL: Search cards #########
-const searchInput = document.querySelector("input.form-control")
-searchInput.addEventListener("input", searchCards)
+let restaurants = [];
+const restaurantService = new RestaurantService();
+const placesContainer = document.getElementById("placesContainer");
+const searchInput = document.getElementById("search");
 
-async function searchCards (e) {
-  e.preventDefault()
-  const input = e.target.value
-  const regex = /\S/g
-  // If search input is not empty
-  if (regex.test(input)) {
-    const restaurantsArray = await loadData()
-    const newData = restaurantsArray.filter((rest) => {
-      return rest.name.toLowerCase().includes(input.toLowerCase()) ||
-            rest.description.toLowerCase().includes(input.toLowerCase())
-    })
-    showRestaurants(newData)
-  } else {
-    showRestaurants()
-  }
-}
-// ######### OPTIONAL: Search cards #########
+const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-// Devuelve objeto con un array de objetos restaurante
-async function loadData () {
-  try {
-    const data = await restaurantService.getAll()
-    return data
-  } catch (error) {
-    console.error("Error on loadData(): ", error)
-  }
+
+async function getrestaurants() {
+    restaurants = await restaurantService.getAll();
+    showRestaurants(restaurants);
 }
 
-// Delete card by id
-async function deleteCard (event) {
-  const id = event.target.parentElement.parentElement.parentElement.id
-  const name = event.target.nextElementSibling.textContent
-  if (confirm(`Do you want to delete ${name}?`)) {
-    restaurantService.delete(id)
-    await loadData()
-    showRestaurants()
-  }
+function showRestaurants(restaurants) {
+    console.log(restaurants);
+    placesContainer.replaceChildren(...restaurants.map(e => restaurant2HTML(e)));
 }
 
-// Shows all restaurants from array
-async function showRestaurants (restaurants) {
-  if (restaurants === undefined) {
-    restaurants = await loadData()
-  }
+function restaurant2HTML(restaurant) {
+    const col = document.createElement("div");
+    col.classList.add("col");
+    const restHTML = restTemplate({
+        ...restaurant,
+        days: restaurant.daysOpen.map(d => WEEKDAYS[d]).join(", "),
+        open: restaurant.daysOpen.includes(new Date().getDay().toString())
+    });
 
-  // Deleting all previuous HTML
-  const container = document.getElementById("placesContainer")
-  container.innerHTML = ""
+    col.innerHTML = restHTML;
 
-  // Creating DOM elements for each RESTAURANT - START
-  restaurants.forEach(arrayElem => {
-    // If validation OK, Creating DOM elements for each RESTAURANT - START
-    if (isRestaurantObj(arrayElem)) {
-      // Create main div.col
-      const divCol = document.createElement("div")
-      divCol.classList.add("col")
-      divCol.setAttribute("id", arrayElem.id)
-      container.append(divCol)
+    col.querySelector("button").addEventListener("click", async e => {
+        const del = confirm("¿Are you sure you want to delete this restaurant?");
+        if (del) {
+            try {
+                await restaurantService.delete(restaurant.id);
+                restaurants = restaurants.filter(r => r.id !== restaurant.id);
+                col.remove();
+            } catch (e) {
+                alert("Error deleting restaurant!");
+                console.error(e);
+            }
+        }
+    });
 
-      console.log(arrayElem.image)
-
-      // SYNTAX USING HANDLEBARS
-      const restHTML = restaurantTemplate({
-        // ...restaurant,
-        image: `${arrayElem.image}`,
-        name: arrayElem.name,
-        description: arrayElem.description,
-        phone: arrayElem.phone,
-        cuisineStyle: arrayElem.cuisine,
-        daysStr: arrayElem.daysOpen.map(d => WEEKDAYS[d]).join(", "),
-        openBool: arrayElem.daysOpen.toString().includes(new Date().getDay())
-      })
-
-      divCol.innerHTML = restHTML
-
-      container.append(divCol)
-
-      divCol.querySelector("button").addEventListener("click", deleteCard)
-      // Creating DOM elements for each RESTAURANT - END
-    }
-  })
+    return col;
 }
 
-function isRestaurantObj (object) {
-  const requiredKeys = ["id", "name", "description", "daysOpen", "phone", "image", "cuisine"]
-  // VALIDATION: Checking if passed array contains a restaurant object propeties
-  for (const key in object) {
-    if (requiredKeys.includes(key)) {
-      requiredKeys[requiredKeys.indexOf(key)] = true
-    }
-  }
-  return requiredKeys.every(k => k === true)
-}
+// Main program
+
+getrestaurants();
+
+searchInput.addEventListener("keyup", e => {
+    const filtered = restaurants.filter(r => 
+        r.name.toLocaleLowerCase().includes(searchInput.value.toLocaleLowerCase()) ||
+        r.description.toLocaleLowerCase().includes(searchInput.value.toLocaleLowerCase()));
+    showRestaurants(filtered);
+});

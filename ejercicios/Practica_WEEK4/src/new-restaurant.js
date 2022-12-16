@@ -1,106 +1,95 @@
-"use strict"
-// CSS & BOOTSTRAP
-import "../node_modules/bootstrap/dist/css/bootstrap.css"
-import css from "../styles.css"
+import { RestaurantService } from "./restaurant-service.class.js";
 
-import { RestaurantService } from "./restaurant-service.class.js"
+import "../node_modules/bootstrap/dist/css/bootstrap.css";
+import "../styles.css";
 
-const formRestaurant = document.getElementById("newRestaurant")
-const imgPreview = document.getElementById("imgPreview")
+const newPlaceForm = document.getElementById("newRestaurant");
+const imgPreview = document.getElementById("imgPreview");
+const restaurantService = new RestaurantService();
 
-const restaurantService = new RestaurantService()
+function testInputExpr(input, expr) {
+    input.classList.remove("is-valid", "is-invalid");
+    let valid = expr.test(input.value);
+    input.classList.add(valid ? "is-valid" : "is-invalid");
+    return valid;
+}
 
-formRestaurant.image.addEventListener("change", (event) => {
-  const file = event.target.files[0]
-  const reader = new FileReader()
+function validatePhone() {
+    return testInputExpr(newPlaceForm.phone, /^[0-9]{9}$/);
+}
 
-  if (file) reader.readAsDataURL(file)
+function validateName() {
+    return testInputExpr(newPlaceForm.name, /^[a-z][a-z ]*$/i);
+}
 
-  reader.addEventListener("load", (e) => {
-    imgPreview.classList.remove("d-none")
-    imgPreview.src = reader.result
-  })
-})
+function validateDescription() {
+    return testInputExpr(newPlaceForm.description, /\S/);
+}
 
-formRestaurant.addEventListener("submit", async (event) => {
-  event.preventDefault()
-  const daysOpen = Array.from(formRestaurant.days)
-    .filter((dc) => dc.checked)
-    .map((dc) => +dc.value)
+function validateCuisine() {
+    return testInputExpr(newPlaceForm.cuisine, /\S/);
+}
 
-  const validations = [
-    validateName(),
-    validateDescription(),
-    validateCuisine(),
-    validateDays(daysOpen),
-    validatePhone(),
-    validateImage()
-  ]
+function validateDays(daysArray) {
+    let daysError = document.getElementById("daysError");
+    if(!daysArray.length)
+        daysError.classList.remove("d-none");
+    else
+        daysError.classList.add("d-none");
+    return daysArray.length > 0;
+}
 
-  if (validations.every((v) => v === true)) {
-    // Check all validations
-    // Create object to pass to SERVER
-    const newRestaurant = {
-      name: formRestaurant.name.value,
-      description: formRestaurant.description.value,
-      daysOpen,
-      cuisine: formRestaurant.cuisine.value,
-      phone: formRestaurant.phone.value,
-      image: imgPreview.src
+function validateImage() {
+    let imgInput = newPlaceForm.image;
+
+    imgInput.classList.remove("is-valid", "is-invalid");
+    if(imgInput.files.length > 0) {
+        imgInput.classList.add("is-valid");
+        return true;
+    } else {
+        imgInput.classList.add("is-invalid");
+        return false;
     }
+}
 
-    try {
-      // Will call http://SERVER/restaurants using ‘POST’, and send the received restaurant.
-      await restaurantService.post(newRestaurant)
-    } catch (error) {
-      console.error("Error while POST new rest", error)
+async function validateForm(event) {
+    event.preventDefault(); 
+    let newRestaurant = {
+        name: newPlaceForm.name.value,
+        image: imgPreview.src,
+        cuisine: newPlaceForm.cuisine.value,
+        description: newPlaceForm.description.value,
+        phone: newPlaceForm.phone.value,
+        daysOpen: Array.from(newPlaceForm.days).filter(dc => dc.checked).map(dc => +dc.value)
+    };
+
+    let validations = [validateName(), validateDescription(), validateCuisine(), validateDays(newRestaurant.daysOpen), validatePhone(), validateImage()];
+
+    if (validations.every(v => v === true)) { // Check all validations
+        try{
+            await restaurantService.post(newRestaurant);
+            location.assign("index.html");
+        } catch (e) {
+            alert("Error creating restaurant!");
+            console.error(e);
+        }
     }
-    location.assign("./index.html")
-  }
-})
-
-function testInputExpr (input, regExpr) {
-  input.classList.remove("is-valid", "is-invalid")
-  const valid = regExpr.test(input.value)
-  input.classList.add(valid ? "is-valid" : "is-invalid")
-  return valid
 }
 
-function validatePhone () {
-  return testInputExpr(formRestaurant.phone, /^[0-9]{9}$/)
+function loadImage(event) {
+    let file = event.target.files[0];
+    let reader = new FileReader();
+
+    if (file) reader.readAsDataURL(file);
+
+    reader.addEventListener("load", () => {
+        imgPreview.classList.remove("d-none");
+        imgPreview.src = reader.result;
+    });
 }
 
-function validateName () {
-  return testInputExpr(formRestaurant.name, /^[a-z][a-z ]*$/i)
-}
+// MAIN
 
-function validateDescription () {
-  return testInputExpr(formRestaurant.description, /\S/)
-}
+newPlaceForm.image.addEventListener("change", loadImage);
+newPlaceForm.addEventListener("submit", validateForm);
 
-function validateCuisine () {
-  return testInputExpr(formRestaurant.cuisine, /\S/)
-}
-
-function validateDays (daysArray) {
-  const daysError = document.getElementById("daysError")
-  if (!daysArray.length) {
-    daysError.classList.remove("d-none")
-  } else {
-    daysError.classList.add("d-none")
-  }
-  return daysArray.length > 0
-}
-
-function validateImage () {
-  const imgInput = document.getElementById("image")
-
-  imgInput.classList.remove("is-valid", "is-invalid")
-  if (imgInput.files.length > 0) {
-    imgInput.classList.add("is-valid")
-    return true
-  } else {
-    imgInput.classList.add("is-invalid")
-    return false
-  }
-}

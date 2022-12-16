@@ -1,0 +1,42 @@
+<div class="card h-100 shadow">
+  <a href="restaurant-detail.html?id={{id}}"><img class="card-img-top" src="{{image}}" /></a>
+  <div class="card-body">
+    {{#if mine}}
+    <button class="btn btn-danger btn-sm float-end">Delete</button>
+    {{/if}}
+    <h4 class="card-title"><a href="restaurant-detail.html?id={{id}}">{{name}}</a></h4>
+    <p class="card-text">{{description}}</p>
+    <div class="card-text">
+      <small class="text-muted">
+        <strong>Opens: </strong>{{days}}
+      </small>
+      {{#if open}}
+      <span class="badge ms-2 bg-success">Open</span>
+      {{else}}
+      <span class="badge ms-2 bg-danger">Closed</span>
+      {{/if}}
+    </div>
+    <div class="card-text">
+      <small class="text-muted">
+        <strong>Phone: </strong>{{phone}}
+      </small>
+    </div>
+    <div class="card-text">
+      <small class="text-muted">
+        {{#each fullStars}}
+        <span>★</span>
+        {{/each}}
+        {{#each emptyStars}}
+        <span>☆</span>
+        {{/each}}
+        ({{stars}})
+      </small>
+    </div>
+  </div>
+  <div class="card-footer">
+    <small class="text-muted">{{cuisine}}</small>
+    <small class="text-muted float-end">
+      {{distance}} km
+    </small>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+{
+    "tabWidth": 4,
+    "useTabs": false,
+    "singleQuote": false,
+    "overrides": [{
+        "files": ["*.html", "*.hbs"],
+        "options": {
+          "tabWidth": 2
+        }
+    }]
+}
