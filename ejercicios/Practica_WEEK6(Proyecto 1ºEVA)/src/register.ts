@@ -36,10 +36,8 @@ registerForm.addEventListener("submit", async event => {
     event.preventDefault();
     //Check if every field is not empty/null and is correct
     const validations = [formValidator.validateName(registerForm), formValidator.validateEmail(registerForm), formValidator.validatePassword(registerForm)];
-    console.log("validate");
 
     if (validations.every(v => v)) { // Check all validations
-        console.log("validate. ok");
 
         //Check if every both email are equal
         if (((registerForm.email2 as unknown as HTMLInputElement).value == (registerForm.email as unknown as HTMLInputElement).value)) {
@@ -52,7 +50,6 @@ registerForm.addEventListener("submit", async event => {
                 lat: latitude,
                 lng: longitude,
             };
-            console.log(newUser);
 
             try {
                 await authService.register(newUser);

@@ -61,8 +61,6 @@ export class Utils {
      * @memberof Utils
      */
     public validateRePassword(form: HTMLFormElement): boolean {
-        console.log((form.password.value == form.password2.value) || (form.password.value == form.repassword.value));
-        
         return (form.password.value == form.password2.value) || (form.password.value == form.repassword.value);
     }
     /**
@@ -164,24 +162,25 @@ export class Utils {
     }
 
     /**
-     * @param {Restaurant} restaurant
+     * @param {Restaurant} object
      * @return {*}  {number[]}
      * @memberof Utils
      */
-    public getFullStars(restaurant: Restaurant): number[] {
+    public getFullStars<objWithStars extends { stars?: number }>(object: objWithStars): number[] {
         //console.log(Math.round(restaurant.stars));
-        const stars = Math.floor(restaurant.stars);
-        return new Array(stars).fill(".");
+        const stars = Math.floor(object.stars);
+        return new Array(stars).fill(1);
     }
 
     /**
-     * @param {Restaurant} restaurant
+     * @param {Restaurant} object
      * @return {*}  {number[]}
      * @memberof Utils
      */
-    public getEmptyStars(restaurant: Restaurant): number[] {
-        const stars = Math.floor(restaurant.stars);
-        return new Array(5 - stars).fill(".");
+    public getEmptyStars<objWithStars extends { stars?: number }>(object: objWithStars): number[] {
+        
+        const stars = Math.floor(object.stars);
+        return new Array(5 - stars).fill(1);
     }
 
     /**
@@ -203,7 +202,7 @@ export class Utils {
         const imgPreview = document.getElementById("imgPreview") as HTMLImageElement;
 
         input.addEventListener("change", async (event: Event) => {
-            console.log("Change detected:");
+            console.log("<Change detected>");
 
             const file = (event.target as HTMLInputElement).files[0];
             const img64 = await this.imageTo64(file);

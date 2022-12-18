@@ -8,8 +8,7 @@ import { UserService } from "./classes/user-service";
 import { Restaurant } from "./interfaces/restaurant";
 import { MapService } from "./classes/map-service";
 import { AuthService } from "./classes/auth-service";
-import { User } from "./interfaces/user";
-
+import { Comment } from "./interfaces/comment";
 //If user is not logged, redirect
 if (!localStorage.getItem("token")) {
     location.assign("login.html");
@@ -21,28 +20,37 @@ logoutButton.addEventListener("click", () => {
     authService.logout();
 });
 
-const userService = new UserService();
 const restaurantService = new RestaurantService();
 let restaurant: Restaurant;
+let comments: Comment[];
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id") as unknown as number;
 
 async function getRestaurant(): Promise<void> {
     try {
         restaurant = await restaurantService.get(id);
+        comments = await restaurantService.getComments(id);
     } catch (error) {
         location.assign("index.html");
     }
     showRestaurants(restaurant);
-    console.log(restaurant);
+    showComments(comments);
 
 }
 
+//RESTAURANTS
 async function showRestaurants(restaurant: Restaurant): Promise<void> {
     const container = <HTMLDivElement>document.getElementById("cardContainer");
     container.replaceChildren(restaurantService.restaurant2HTML(restaurant));
-}
 
+}
+//COMMENTS
+async function showComments(comments: Comment[]): Promise<void> {
+    const commentContainer = <HTMLDivElement>document.getElementById("comments");
+    commentContainer.replaceChildren(...comments.map(e =>
+        restaurantService.comment2HTML(e))
+    );
+}
 getRestaurant().then(() => {
     showMap();
     showOwner();
@@ -58,10 +66,11 @@ async function showMap(): Promise<void> {
         {
             latitude: number,
             longitude: number
-        } = {
-            latitude: restaurant.lat,
-            longitude: restaurant.lng
-        };
+        } =
+    {
+        latitude: restaurant.lat,
+        longitude: restaurant.lng
+    };
     const mapService = MapService.createMapService(coords, "map");
     mapService.createMarker(coords, "red");
 
@@ -78,5 +87,10 @@ async function showOwner(): Promise<void> {
     divName.textContent = restaurant.creator.name;
     divEmail.textContent = restaurant.creator.email;
     divImg.src = restaurant.creator.avatar;
+    divImg.src = restaurant.creator.avatar;
+    divImg.src = restaurant.creator.avatar;
+
 }
+
+
 

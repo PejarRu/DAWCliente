@@ -63,7 +63,6 @@ formPassword.addEventListener("submit", async (event: SubmitEvent) => {
     event.preventDefault();
 
     const validation = [util.validatePassword(formPassword), util.validateRePassword(formPassword)];
-    console.log(validation);
     
     if (validation.every(v => v)) {
         await userService.savePassword(formPassword.password.value);

@@ -7,3 +7,7 @@ export interface Comment {
     date?: string;
     user?: User;
 }
+export interface CommentHbs extends Comment {
+    fullStars: number[],
+    emptyStars: number[],
+}

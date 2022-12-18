@@ -1,7 +1,7 @@
 import { User, UserLogin } from "../interfaces/user";
 import { Http } from "./http.class";
-import { SERVER, TABLE } from "../constants";
-import { TokenResponse, UserResponse } from "../interfaces/responses";
+import { SERVER } from "../constants";
+import { TokenResponse } from "../interfaces/responses";
 
 export class AuthService {
     constructor(private dbConnection: Http = new Http()) { }
@@ -9,6 +9,8 @@ export class AuthService {
     // Will call http://SERVER/auth/register using ‘POST’, and add the new user.
     async register(userInfo: User): Promise<void> {
         console.log("auth-service: Register new user");
+        // !  Delete or comment this line to not show password in console.log
+        //console.log(userInfo);
         return this.dbConnection.post(`${SERVER}/auth/register`, userInfo);
     }
     // Will call http://SERVER/auth/login using POST, and return a token

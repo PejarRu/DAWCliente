@@ -10,38 +10,37 @@ export class UserService {
     
     constructor(private dbConnection: Http = new Http()) { }
     
-    async getAllProfile(id?: number):Promise<User[]> {
-        console.log("user-service: getProfile " + id);
+    async getAllProfiles():Promise<User[]> {
+        console.log("user-service: getAllProfiles ");
         const resp = this.dbConnection.get<UsersResponse>(SERVER + "/users");
         return (await resp).users;
     }
     
     async getProfile(id?: number): Promise<User> {
-        console.log("user-service: getProfile " + id);
+        console.log("user-service: getProfile: " + id);
         const resp = this.dbConnection.get<UserResponse>(SERVER + "/users" + "/" + id);
         return (await resp).user;
     }
     async getMyProfile(): Promise<User> {
-        console.log("user-service: getMyProfile");
-        
+        console.log("user-service: getMyProfile;");
         const resp = this.dbConnection.get<UserResponse>(SERVER + "/users/me");
 
         return (await resp).user;
     }
 
     async saveProfile(name: string, email: string):Promise<void> {
-        console.log("user-service: saveProfile:");
+        console.log("user-service: saveProfile: " + email + ", " + name + ";");
         this.dbConnection.put<UserResponse>(SERVER + "/users/me", {"email":email, "name": name});
     }
 
     async saveAvatar(avatar64: string):Promise<string> {
-        console.log("user-service: saveAvatar:");
+        console.log("user-service: saveAvatar: <image64>;");
         const resp = this.dbConnection.put<Promise<string>>(SERVER + "/users/me/avatar", {"avatar":avatar64});
         return (await resp);
     }
 
     async savePassword(password: string):Promise<void> {
-        console.log("user-service: savePassword:");
+        console.log("user-service: savePassword: <password>;");
         this.dbConnection.put<UserResponse>(SERVER + "/users/me/password", {"password":password});
     }
 
