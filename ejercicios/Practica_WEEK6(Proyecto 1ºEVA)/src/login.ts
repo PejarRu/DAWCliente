@@ -7,7 +7,7 @@ const loginForm = document.getElementById("form-login") as HTMLFormElement;
 const authService = new AuthService();
 
 //If user is logged, redirect
-if ( localStorage.getItem("token")) {
+if (localStorage.getItem("token")) {
     location.assign("index.html");
 }
 
@@ -16,15 +16,21 @@ let longitude = 0;
 
 loginForm.addEventListener("submit", async event => {
     event.preventDefault();
-    const validations = [validateName(), validatePassword()];
+    //Check if every field is not empty/null and is correct
+    //const validations = [utils.validateName(loginForm), utils.validatePassword(loginForm)];
+    const validations = [true];
+
     try {
         const coords = await GeolocationService.getLocation();
         latitude = coords.latitude;
         longitude = coords.longitude;
-    // eslint-disable-next-line no-empty
+        localStorage.setItem("GeoCoords", coords as unknown as string + "esta linea esta en: login.ts(29)");
+
+        // eslint-disable-next-line no-empty
     } catch (error) {
         //Ignore
     }
+
     const userLogin: UserLogin = {
         email: (loginForm.email as unknown as HTMLInputElement).value,
         password: loginForm.password.value,
@@ -35,26 +41,14 @@ loginForm.addEventListener("submit", async event => {
     if (validations.every(v => v)) { // Check all validations
 
         try {
-            const token : TokenResponse = await authService.login(userLogin) as unknown as TokenResponse;
-            localStorage.setItem("token", token.accessToken);           
+            const token: TokenResponse = await authService.login(userLogin) as unknown as TokenResponse;
+            localStorage.setItem("token", token.accessToken);
             location.assign("index.html");
         } catch (loginError) {
             //alert("Error entering account! \n");
-            const errorDisplay = document.getElementById("errorInfo") as HTMLParagraphElement;        
+            const errorDisplay = document.getElementById("errorInfo") as HTMLParagraphElement;
             errorDisplay.innerHTML = loginError.error;
         }
     }
 });
-
-function validateName(): boolean {
-    let empty = (loginForm.email as unknown as HTMLInputElement).value === "";
-    let notNull = (loginForm.email as unknown as HTMLInputElement).value === null;
-    return !empty && !notNull;
-}
-
-function validatePassword(): boolean {
-    let empty = loginForm.password.value === "";
-    let notNull = loginForm.password.value === null;
-    return !empty && !notNull;
-}
 

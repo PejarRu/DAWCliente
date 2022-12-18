@@ -8,26 +8,26 @@ export class AuthService {
 
     // Will call http://SERVER/auth/register using ‘POST’, and add the new user.
     async register(userInfo: User): Promise<void> {
-        console.log("auth-service: Register new");
+        console.log("auth-service: Register new user");
         return this.dbConnection.post(`${SERVER}/auth/register`, userInfo);
     }
     // Will call http://SERVER/auth/login using POST, and return a token
     async login(userLogin: UserLogin): Promise<void> {
-        console.log("auth-service: Login");
+        console.log("auth-service: Login user");
         return this.dbConnection.post(`${SERVER}/auth/login`, userLogin);
     }
 
     // Will call http://SERVER/auth/validate using post, and check if token is valid
-    async checkToken(): Promise<void> {
-        console.log("auth-service: Check token");
+    async checkToken(): Promise<string> {
+        console.log("auth-service: Check current token");
         const token = localStorage.getItem("token");
-        return this.dbConnection.post(`${SERVER}/auth/validate`, token);
+        return (await ( this.dbConnection.post<TokenResponse>(`${SERVER}/auth/validate`, token))).accessToken;
     }
 
     // Will unset "token" from localStorage
     public logout(): void {
         console.log("auth-service: Logout");
         localStorage.removeItem("token");
-        //location.reload();
+        location.reload();
     }
 }

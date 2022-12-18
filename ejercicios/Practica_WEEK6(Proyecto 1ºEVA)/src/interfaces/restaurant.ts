@@ -20,10 +20,6 @@ export interface Restaurant {
 export interface RestaurantHbs extends Restaurant {
     open: boolean;
     days: string;
-    distanceStr: string;
     fullStars: number[],
     emptyStars: number[],
-    /*
-    daysOpenStr(daysOpen: string[]):string;
-    */
 }

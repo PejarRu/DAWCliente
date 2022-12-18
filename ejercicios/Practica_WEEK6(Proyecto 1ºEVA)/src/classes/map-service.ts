@@ -14,7 +14,7 @@ export class MapService {
     private constructor(
         private coords: { latitude: number; longitude: number },
         private divMapId: string
-    ) {}
+    ) { }
 
     static createMapService(
         coords: { latitude: number; longitude: number },
@@ -22,9 +22,9 @@ export class MapService {
     ): MapService {
         const mapService = new MapService(coords, divMapId);
 
-        esriConfig.apiKey = ARCGIS_TOKEN;
+        esriConfig.apiKey = "AAPKc2940b004f38491b869000328dd73685GNKiJxJwOBscpCvz9Pxpae-LVDdvsqr_p6VDTqAas1Kj7idPwcMZqSc-fuDAY91R";
 
-        const map = new Map({ basemap: "osm-streets-relief" });
+        const map = new Map({ basemap: "streets-vector" });
         mapService.mapView = new MapView({
             map: map,
             center: [coords.longitude, coords.latitude], // Longitude, latitude
@@ -68,6 +68,29 @@ export class MapService {
         });
         this.mapView.ui.add(this.search, "top-right");
 
-        return this.search ;
+        return this.search;
+    }
+
+    async getDireccion(lng: number, lat: number): Promise<string> {
+        const url = "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=" + lng + "," + lat + "&langCode=es&f=pjson&apiKey=" + ARCGIS_TOKEN;
+        let direccion = " ";
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const address = data.address;
+            const street = address.Address;
+            const zipCode = address.Postal;
+            const neighborhood = address.Neighborhood;
+            const city = address.City;
+            const state = address.Region;
+            direccion = street + ", " + zipCode + ", " + neighborhood + ", " + city + ", " + state;
+
+        } catch (error) {
+            console.log("Error: " + error);
+        }
+        //console.log(direccion);
+        return direccion;
     }
 }

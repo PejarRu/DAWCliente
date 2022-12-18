@@ -8,7 +8,8 @@
     "build": "webpack",
     "build:watch": "webpack --watch",
     "prestart": "npm test",
-    "start": "webpack serve --open"
+    "start": "webpack serve --open",
+    "start:watch": "webpack --open serve --open"
   },
   "author": "",
   "license": "ISC",
@@ -29,7 +30,10 @@
   "dependencies": {
     "@arcgis/core": "^4.24.7",
     "bootstrap": "^5.2.2",
+    "geocoder-arcgis": "^2.0.0",
     "handlebars": "^4.7.7",
-    "sweetalert2": "^11.6.2"
+    "node-fetch": "^2.6.7",
+    "nodemon": "^2.0.20",
+    "sweetalert2": "^11.4.8"
   }
 }

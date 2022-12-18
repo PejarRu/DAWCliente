@@ -21,10 +21,10 @@ export interface LoginFormElements extends HTMLFormElement {
 }
 
 export interface RegisterFormElements extends HTMLFormElement {
-    nameUser: HTMLInputElement;
-    email: HTMLInputElement;
-    password?: HTMLInputElement;
-    avatar: HTMLInputElement;
+    name: string;
+    email: string;
+    password?: string;
+    avatar: string;
     lat: number;
     lng: number;
 }
