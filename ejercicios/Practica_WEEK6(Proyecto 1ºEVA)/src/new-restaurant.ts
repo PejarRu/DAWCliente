@@ -60,10 +60,7 @@ async function showMap(): Promise<void> {
         latitude = pointerCords.get("latitude");
         longitude = pointerCords.get("longitude");
         mapService.getDireccion(longitude, latitude);
-        mapService.createMarker({ latitude: latitude, longitude: longitude }, "green");
-        console.log(latitude);
-        console.log(longitude);
-        
+        mapService.createMarker({ latitude: latitude, longitude: longitude }, "green");        
     });
 
 
@@ -111,7 +108,6 @@ showMap().then(() => {
                 // eslint-disable-next-line no-debugger
                 //debugger;
                 newRestaurant = await restaurantService.post(newRestaurant);
-                console.log(newRestaurant);
 
                 alert("Succed!");
                 location.assign("restaurant-detail.html?id=" + newRestaurant.id);
