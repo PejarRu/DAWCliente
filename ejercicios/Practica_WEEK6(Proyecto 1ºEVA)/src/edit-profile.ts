@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import "../styles.css";
 import { AuthService } from "./classes/auth-service";
 import { UserService } from "./classes/user-service";
@@ -19,6 +20,7 @@ const util = new Utils();
 let user: User;
 
 //DATA LOAD
+//! This following does not work properly. There are times when user do not updated with the real value from server
 async function init(): Promise<void> {
     try {
         user = await userService.getMyProfile();
@@ -31,11 +33,17 @@ async function init(): Promise<void> {
         //Current profile photo is showing
         (document.querySelector("#photo") as HTMLImageElement).src = user.avatar;
         //Clean password input
-        (document.querySelector("#password") as HTMLInputElement).value ="";
-        (document.querySelector("#password2") as HTMLInputElement).value ="";
+        (document.querySelector("#password") as HTMLInputElement).value = "";
+        (document.querySelector("#password2") as HTMLInputElement).value = "";
     } catch (error) {
         console.error(error);
+        Swal.fire({
+            title: "An error ocurred",
+            text: "We apologize. Some type of error ocurred",
+            icon: "error"
+        });
     }
+
 }
 init();
 
@@ -46,14 +54,40 @@ formProfile.addEventListener("submit", async (event: SubmitEvent) => {
 
     const validation = [util.validateEmail(formProfile), util.validateName(formProfile)];
     if (validation.every(v => v)) {
+
+        //! This following does not capture any error from the server responses. In order to capture the error, 
+        //! the function "put" and "http" from http.class should be modified
         await userService.saveProfile(
-            (formProfile.name as unknown as HTMLInputElement).value, formProfile.email.value
-        );
+            (formProfile.name as unknown as HTMLInputElement).value,
+            formProfile.email.value,
+        ).then(() => {
+            console.log("succed (possibly error)");
+            // ! The following code does not work. It executes every time even if an error was thrown in http.class
+            //user.name = (formProfile.name as unknown as HTMLInputElement).value;
+            //user.email = formProfile.email.value;
+            Swal.fire({
+                title: "Done",
+                text: "Email have been changed",
+                icon: "success"
+            });
+        }).catch((error) => {
+            console.log(error);
+
+            Swal.fire({
+                title: "An error ocurred",
+                text: error.message,
+                icon: "error"
+            });
+        });
+
         init();
 
-        alert("Email and name edited!");
     } else {
-        alert("Something went wrong");
+        Swal.fire({
+            title: "Incorrect data",
+            text: "Email or name is empty or incorrect",
+            icon: "warning"
+        });
 
     }
 });
@@ -63,14 +97,29 @@ formPassword.addEventListener("submit", async (event: SubmitEvent) => {
     event.preventDefault();
 
     const validation = [util.validatePassword(formPassword), util.validateRePassword(formPassword)];
-    
+
     if (validation.every(v => v)) {
         await userService.savePassword(formPassword.password.value);
         init();
-
-        alert("Password edited!");
+        Swal.fire({
+            title: "Password edited",
+            text: "Password have been changed!",
+            icon: "info"
+        });
     } else {
-        alert("Something went wrong");
+        if (validation[0] === false) {
+            Swal.fire({
+                title: "Incorrect data",
+                text: "Password dont have correct format",
+                icon: "warning"
+            });
+        } else {
+            Swal.fire({
+                title: "Incorrect data",
+                text: "Password dont match",
+                icon: "warning"
+            });
+        }
 
     }
 });
@@ -85,11 +134,17 @@ formAvatar.addEventListener("submit", async (event: SubmitEvent) => {
         user.avatar = await userService.saveAvatar(
             await Utils.imageTo64((formAvatar.image as HTMLInputElement).files[0])
         );
-        init();
-
-        alert("Avatar edited!");
+        Swal.fire({
+            title: "Avatar edited",
+            text: "Avatar have been changed!",
+            icon: "info"
+        });
     } catch (error) {
-        alert("Something went wrong");
+        Swal.fire({
+            title: "Sorry",
+            text: "Something went wrong",
+            icon: "error"
+        });
         console.error(error);
     }
 });

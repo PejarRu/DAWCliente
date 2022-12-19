@@ -7,6 +7,7 @@ const commentTemplate: (r: CommentHbs) => string = require("../../handlebars/com
 
 import { SERVER, TABLE } from "../constants";
 import { Utils } from "./utils-service";
+import Swal from "sweetalert2";
 
 const utils = new Utils();
 
@@ -50,7 +51,7 @@ export class RestaurantService {
 
     // Will call http://SERVER/restaurants/id/comments using ‘POST’, and return COMMENT response if OK
     async addComment(restaurantId: number, comment: Comment): Promise<Comment> {
-        console.log("rest-service: AddComment on" + restaurantId);
+        console.log("rest-service: AddComment on: " + restaurantId);
         console.log(comment);
         const resp = this.dbConnection.post<CommentResponse>(SERVER + TABLE + "/" + restaurantId + "/comments", comment);
         return (await resp).comment;
@@ -70,21 +71,6 @@ export class RestaurantService {
         });
 
         col.innerHTML = commentHTML;
-        /*
-                if (comment.mine) {
-                    col.querySelector("button").addEventListener("click", async e => {
-                        if (confirm("¿Are you sure you want to delete this comment?")) {
-                            try {
-                                await this.delete(comment.id);
-                                location.assign("index.html");
-                            } catch (e) {
-                                alert("Error deleting comment!");
-                                console.error(e);
-                            }
-                        }
-                    });
-                }
-        */
         return col;
     }
 
@@ -113,7 +99,11 @@ export class RestaurantService {
                         await this.delete(restaurant.id);
                         location.assign("index.html");
                     } catch (e) {
-                        alert("Error deleting restaurant!");
+                        Swal.fire({
+                            title: "Error ocurred",
+                            text: "Error deleting restaurant!",
+                            icon: "error"
+                        });
                         console.error(e);
                     }
                 }

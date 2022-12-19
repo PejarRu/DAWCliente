@@ -3,6 +3,7 @@ import { AuthService } from "./classes/auth-service";
 import { UserLogin } from "./interfaces/user";
 import { GeolocationService } from "./classes/geolocation-service";
 import { TokenResponse } from "./interfaces/responses";
+import Swal from "sweetalert2";
 const loginForm = document.getElementById("form-login") as HTMLFormElement;
 const authService = new AuthService();
 
@@ -45,7 +46,11 @@ loginForm.addEventListener("submit", async event => {
             localStorage.setItem("token", token.accessToken);
             location.assign("index.html");
         } catch (loginError) {
-            //alert("Error entering account! \n");
+            Swal.fire({
+                title: "Error",
+                text: loginError,
+                icon: "error"
+            });
             const errorDisplay = document.getElementById("errorInfo") as HTMLParagraphElement;
             errorDisplay.innerHTML = loginError.error;
         }

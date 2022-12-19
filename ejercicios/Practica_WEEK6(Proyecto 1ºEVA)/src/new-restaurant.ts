@@ -7,6 +7,7 @@ import { Utils } from "./classes/utils-service";
 //Map related
 import { GeolocationService } from "./classes/geolocation-service";
 import { MapService } from "./classes/map-service";
+import Swal from "sweetalert2";
 
 //If user is not logged, redirect to login page
 if (!localStorage.getItem("token")) {
@@ -34,10 +35,10 @@ async function showMap(): Promise<void> {
     pAddress.value = direccion;
 
     //* Muestra datos relevantes
-    console.log("----- COORDS ------");
-    console.log("Current user location: \n" + direccion);
+    //console.log("----- COORDS ------");
+    //console.log("Current user address: \n" + direccion);
     //console.table(currentUserLocation);
-    console.info("----- COORDS ------");
+    //console.info("----- COORDS ------");
 
     mapService.createMarker(currentUserLocation, "red");
 
@@ -60,7 +61,7 @@ async function showMap(): Promise<void> {
         latitude = pointerCords.get("latitude");
         longitude = pointerCords.get("longitude");
         mapService.getDireccion(longitude, latitude);
-        mapService.createMarker({ latitude: latitude, longitude: longitude }, "green");        
+        mapService.createMarker({ latitude: latitude, longitude: longitude }, "green");
     });
 
 
@@ -80,17 +81,17 @@ showMap().then(() => {
 
         //Check every field of form
         const formValidator = new Utils;
-        const validations = [
-            formValidator.validateName(newRestForm),
-            formValidator.validateDescription(newRestForm),
-            formValidator.validatePhone(newRestForm),
-            formValidator.validateCuisine(newRestForm),
-            //formValidator.validateDaysFromHTML(newRestForm),
-            formValidator.validateDays(checkedDays),
-            formValidator.validateImage(newRestForm),
-        ];
-
-        if (validations.every(v => v)) { // Check all validations
+        const validations: { [key: string]: boolean } = {
+            "name": formValidator.validateName(newRestForm),
+            "description": formValidator.validateDescription(newRestForm),
+            "phone": formValidator.validatePhone(newRestForm),
+            "cuisine": formValidator.validateCuisine(newRestForm),
+            //"days":formValidator.validateDaysFromHTML(newRestForm),
+            "days": formValidator.validateDays(checkedDays),
+            "image": formValidator.validateImage(newRestForm),
+        };
+        // //
+        if (Object.values(validations).every(value => value)) { // Check all validations
 
             //Create new restaurant object from FORM value inputs
             let newRestaurant: Restaurant = {
@@ -109,15 +110,35 @@ showMap().then(() => {
                 //debugger;
                 newRestaurant = await restaurantService.post(newRestaurant);
 
-                alert("Succed!");
+                Swal.fire({
+                    title: "Succed",
+                    text: "Restaurant posted"
+                });
                 location.assign("restaurant-detail.html?id=" + newRestaurant.id);
             } catch (regError) {
-                alert("Error ocurred!");
-                //Formating array of errors in to a <li>list</li> string and displaying in HTML 
-                alert(regError.message.map(((error: string) => + error.charAt(0).toUpperCase() + error.slice(1) + "\n")).join(""));
+                console.log(regError);
+                const message = regError.message.map((error: string) => error.toString().charAt(0).toUpperCase() + error.slice(1)).join(", </br>");
+                Swal.fire({
+                    title: "Error ocurred",
+                    //Formating array of errors in to a string and displaying in HTML 
+                    html: message,
+                    icon: "error",
+                });
             }
         } else {
-            alert("Something went wrong");
+            const invalidFields = Object.entries(validations)
+                .filter(([key, value]) => !value) // solo valores false
+                .map(([key, value]) => key.charAt(0).toUpperCase() + key.slice(1) + " is empty or incorrect format"); // solo los nombres de los campos
+
+            const errorString = invalidFields.join(", </br>");
+
+            Swal.fire({
+                title: "Data not correct",
+                //Formating array of errors in to a string and displaying in HTML 
+                html: errorString,
+                icon: "warning",
+            });
+            //text: validations.filter(v=>!v.value).map(((input) => + error.charAt(0).toUpperCase() + error.slice(1) + "\n")).join("")
         }
 
     });

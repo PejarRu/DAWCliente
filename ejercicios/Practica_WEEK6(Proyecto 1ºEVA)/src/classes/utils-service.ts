@@ -61,7 +61,7 @@ export class Utils {
      * @memberof Utils
      */
     public validateRePassword(form: HTMLFormElement): boolean {
-        return (form.password.value == form.password2.value) || (form.password.value == form.repassword.value);
+        return (form.password.value == form.password2.value) || (form.password.value == form.password2.value);
     }
     /**
      * @param {HTMLFormElement} form
@@ -167,7 +167,6 @@ export class Utils {
      * @memberof Utils
      */
     public getFullStars<objWithStars extends { stars?: number }>(object: objWithStars): number[] {
-        //console.log(Math.round(restaurant.stars));
         const stars = Math.floor(object.stars);
         return new Array(stars).fill(1);
     }
@@ -202,7 +201,7 @@ export class Utils {
         const imgPreview = document.getElementById("imgPreview") as HTMLImageElement;
 
         input.addEventListener("change", async (event: Event) => {
-            console.log("<Change detected>");
+            //console.log("<Change detected>");
 
             const file = (event.target as HTMLInputElement).files[0];
             const img64 = await this.imageTo64(file);
@@ -227,7 +226,7 @@ export class Utils {
         //debugger;
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            if (file) {
+            if (file && (file.type === "image/png" || file.type === "image/jpg"  || file.type === "image/jpeg")) {
                 reader.readAsDataURL(file);
                 reader.onload = (): void => {
                     resolve(reader.result as string);

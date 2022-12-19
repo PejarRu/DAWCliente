@@ -14,6 +14,7 @@ export class Http {
         }
     }
 
+    
     get<T>(url: string): Promise<T> {
         return this.ajax<T>("GET", url);
     }
