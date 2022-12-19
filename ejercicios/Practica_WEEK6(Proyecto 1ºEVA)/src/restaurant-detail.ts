@@ -3,12 +3,12 @@ import "../styles.css";
 "use strict";
 // HTTP(Ajax)
 import { RestaurantService } from "./classes/restaurant-service";
-import { UserService } from "./classes/user-service";
 // Constants & Interface $ Handlebars
 import { Restaurant } from "./interfaces/restaurant";
 import { MapService } from "./classes/map-service";
 import { AuthService } from "./classes/auth-service";
 import { Comment } from "./interfaces/comment";
+import Swal  from "sweetalert2";
 //If user is not logged, redirect
 if (!localStorage.getItem("token")) {
     location.assign("login.html");
@@ -34,7 +34,6 @@ async function getRestaurant(): Promise<void> {
         location.assign("index.html");
     }
     showRestaurants(restaurant);
-    showComments(comments);
 
 }
 
@@ -44,9 +43,11 @@ async function showRestaurants(restaurant: Restaurant): Promise<void> {
     container.replaceChildren(restaurantService.restaurant2HTML(restaurant));
 
 }
+
 //COMMENTS
+const commentContainer = <HTMLDivElement>document.getElementById("comments");
+//Show comments
 async function showComments(comments: Comment[]): Promise<void> {
-    const commentContainer = <HTMLDivElement>document.getElementById("comments");
     commentContainer.replaceChildren(...comments.map(e =>
         restaurantService.comment2HTML(e))
     );
@@ -54,7 +55,51 @@ async function showComments(comments: Comment[]): Promise<void> {
 getRestaurant().then(() => {
     showMap();
     showOwner();
+    showComments(comments);
+    if (restaurant.commented) {
+        commentForm.classList.add("d-none");
+    }
+});
+//Add comment
+const commentForm = <HTMLFormElement>document.getElementById("commentForm");
+commentForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const newComment: Comment = {
+        text: commentForm.comment.value,
+        stars: Number(puntuacion),
+    };
 
+    try {
+        await restaurantService.addComment(id, newComment);
+        location.reload();
+    } catch (error) {
+        console.log("Error: " + error);
+        Swal.fire({ 
+            title: "Error ocurred",
+            text: "Something went wrong"
+        });
+    }
+
+});
+//  Stars and value selection
+const divStars = <HTMLFormElement>document.getElementById("stars");
+let puntuacion: number = 0;
+const stars = divStars.getElementsByTagName("span");
+
+divStars.childNodes.forEach((span: HTMLSpanElement) => {
+    if (span.tagName === "SPAN") {
+        span.addEventListener("click", () => {
+            puntuacion = span.dataset.score as unknown as number;
+            //Change the icon of each span if it value is less than the selected
+            for (let j = 0; j < stars.length; j++) {
+                if (puntuacion <= (stars[j].dataset.score as unknown as number) - 1) {
+                    stars[j].textContent = "☆";
+                } else {
+                    stars[j].textContent = "★";
+                }
+            }
+        });
+    }
 });
 
 async function showMap(): Promise<void> {

@@ -3,6 +3,7 @@ import { AuthService } from "./classes/auth-service";
 import { User } from "./interfaces/user";
 import { GeolocationService } from "./classes/geolocation-service";
 import { Utils } from "./classes/utils-service";
+import Swal from "sweetalert2";
 
 const registerForm = document.getElementById("form-register") as HTMLFormElement;
 const authService = new AuthService();
@@ -53,16 +54,28 @@ registerForm.addEventListener("submit", async event => {
 
             try {
                 await authService.register(newUser);
-                alert("You have been registered! :)");
+                Swal.fire({
+                    title: "Done",
+                    text: "You have been registered! :)",
+                    icon: "success"
+                });
                 location.assign("login.html");
             } catch (regError) {
-                //alert("Error while trying register!");
+                /*Swal.fire({
+                    title: "Error",
+                    text: "An error ocurred while trying to register",
+                    icon: "error"
+                });*/
                 const errorDisplay = document.getElementById("errorInfo") as HTMLParagraphElement;
                 //Formating array of errors in to a <li>list</li> string and displaying in HTML 
                 errorDisplay.innerHTML = regError.message.map(((error: string) => "<li>" + error.charAt(0).toUpperCase() + error.slice(1) + "</li>")).join("");
             }
         } else {
-            alert("Emails don't match!");
+            Swal.fire({
+                title: "Wrong",
+                text: "Emails do not match",
+                icon: "warning"
+            });
         }
     }
 
