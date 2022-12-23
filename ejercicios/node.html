@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="urls"></div>
+
+  <script>
+    //"https://aules.edu.gva.es/semipresencial/pluginfile.php/XXXXXX/mod_resource/content/YYYYYY/Unit%202%20-%20Angular%20-%20part%203.pdf";
+    url = "https://aules.edu.gva.es/semipresencial/pluginfile.php/${x}/mod_resource/content/${y}/Unit%202%20-%20Angular%20-%20part%203.pdf";
+
+    const divUrls = document.querySelector("#urls");
+    for (let y = 5; y <= 20; y++) {
+      for (let x = 1517646; x <= 1517660; x++) {
+        let url = `https://aules.edu.gva.es/semipresencial/pluginfile.php/${x}/mod_resource/content/${y}/Unit%202%20-%20Angular%20-%20part%203.pdf`;
+            // Crear elemento a
+            const a = document.createElement('a');
+            a.href = url;
+            a.textContent = url;
+            a.download = 'mi-documento.pdf';
+
+            document.body.appendChild(a);
+        fetch(url)
+
+          .then(response => {
+
+            console.log(url);
+            // Crear elemento a
+            const a = document.createElement('a');
+            a.href = url;
+            a.textContent = url;
+            a.download = 'mi-documento.pdf';
+
+            document.body.appendChild(a);
+
+          })
+          //response.text()
+          .catch(error => {console.log(error); });
+      }
+    }
+
+    async function obtenerPagina(url) {
+      const response = await fetch(url);
+      const html = await response;
+      return html;
+    }
+
+  </script>
+</body>
+
+</html>
