@@ -1,0 +1,41 @@
+<div class="mt-4">
+  <div class="card h-100 shadow" id="{{ restaurant.id }}">
+    <img class="card-img-top" src="{{ restaurant.image }}" />
+    <div class="card-body">
+      <button class="btn btn-danger btn-sm float-end" (click)="delete()">
+        Delete
+      </button>
+      <h4 class="card-title">{{ restaurant.name }}</h4>
+      <p class="card-text">{{ restaurant.description }}</p>
+      <div class="card-text">
+        <small class="text-muted">
+          <strong>Opens: </strong>
+          <span *ngFor="let day of restaurant.daysOpen">
+            {{ days[+day] }}
+            <!-- days has the names of the days -->
+          </span>
+        </small>
+        <span
+          class="badge ms-2 bg-success"
+          *ngIf="
+            restaurant.daysOpen.includes('' + this.weekDay);
+            else elseClosed
+          "
+          >Open</span
+        >
+        <ng-template #elseClosed>
+          <span class="badge ms-2 bg-danger">Closed</span>
+        </ng-template>
+      </div>
+      <div class="card-text">
+        <small class="text-muted">
+          <strong>Phone: </strong>{{ restaurant.phone }}
+        </small>
+      </div>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{{ restaurant.cuisine }}</small>
+    </div>
+  </div>
+</div>
+

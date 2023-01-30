@@ -1,0 +1,32 @@
+<div class="container">
+  <form  class="mt-4">
+    <legend>Welcome to FoodScore!</legend>
+
+    <div class="mb-3">
+      <label for="email">Email:</label>
+      <input
+        type="email"
+        class="form-control"
+        name="email"
+        id="email"
+        placeholder="Email"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        class="form-control"
+        name="password"
+        id="password"
+        placeholder="Password"
+        required
+      />
+    </div>
+
+      <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <a class="btn btn-secondary"  role="button">Create account</a>
+    <button type="submit" (click)="checkLogin()" class="btn btn-primary">Login</button>
+  </form>
+</div>
