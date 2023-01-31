@@ -18,8 +18,8 @@ export class RestaurantsService {
 
   getRestaurants(): Observable<Restaurant[]> {
     return this.http.get<ResponseRestaurants>
-    (this.restaurantURL)
-    .pipe(
+      (this.restaurantURL)
+      .pipe(
         retry(3),
         map(response => response.restaurants),
         catchError((resp: HttpErrorResponse) =>
@@ -27,40 +27,36 @@ export class RestaurantsService {
             `Error getting restaurants. Status: ${resp.status}. Message: ${resp.message}`
           )
         )
-    );
+      );
   }
 
   getRestaurant(id: number): Observable<Restaurant> {
     return this.http.get<ResponseRestaurant>(`${this.restaurantURL}/${id}`)
-    .pipe(
-      map((response) => response.restaurant)
-    );
+      .pipe(
+        map((response) => response.restaurant)
+      );
   }
 
   addRestaurant(restaurant: Restaurant): Observable<Restaurant> {
     return this.http.post<ResponseRestaurant>(`${this.restaurantURL}`, restaurant)
-    .pipe(
-      map((response) => response.restaurant)
-    );
+      .pipe(
+        map((response) => response.restaurant)
+      );
   }
 
   deleteRestaurants(id: number): Observable<Restaurant> {
     return this.http.delete<ResponseRestaurant>(`${this.restaurantURL}/${id}`)
-    .pipe(
-      map((response) => response.restaurant)
-    );
+      .pipe(
+        map((response) => response.restaurant)
+      );
   }
-  
-  /*
-  //!Restairant.id does not exist. 
-  //To-Do: Cheack id restaurant has propertie id
+
   editRestaurant(restaurant: Restaurant): Observable<void> {
     return this.http.put<void>
-    (`${this.restaurantURL}/${restaurant.id}`,
-    restaurant
-    );
+      (`${this.restaurantURL}/${restaurant.id}`,
+        restaurant
+      );
   }
-  */
   /*
   changeRating(idRestaurant: number, rating: number): Observable<void> {
     return this.http.put<void>

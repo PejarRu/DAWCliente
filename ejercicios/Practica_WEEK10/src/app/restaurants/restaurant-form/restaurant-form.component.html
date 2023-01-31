@@ -1,123 +1,69 @@
 <form class="mt-4" (ngSubmit)="addRestaurant()" [formGroup]="restaurantForm">
   <div class="mb-3">
     <label for="name">Name</label>
-    <input
-      type="text"
-      class="form-control"
-      name="name"
-      id="name"
-      formControlName="name"
-      placeholder="Enter name"
-/>
-    <div class="invalid-feedback"
-    *ngIf="restaurantForm.get('name')?.touched && restaurantForm.get('name')?.invalid">
+    <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" formControlName="name"
+      [ngClass]="validClasses(nameControl, 'is-valid', 'is-invalid')" />
+    <div class="invalid-feedback" *ngIf="restaurantForm.get('name')?.touched && restaurantForm.get('name')?.invalid">
       Name can only contain letters and spaces and start with a letter.
     </div>
   </div>
   <div class="mb-3">
     <label for="description">Description</label>
-    <textarea
-      class="form-control"
-      id="description"
-      name="description"
-      rows="3"
-      placeholder="Description"
-      formControlName="descForm"
-      [ngClass]="validClasses(descControl, 'is-valid', 'is-invalid')"
-    ></textarea>
-    <div class="invalid-feedback"
-      *ngIf="descControl.errors?.['required']"
-    >
+    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description"
+      formControlName="description" [ngClass]="validClasses(descControl, 'is-valid', 'is-invalid')"></textarea>
+    <div class="invalid-feedback" *ngIf="descControl.errors?.['required']">
       Description is required.
     </div>
     <div class="invalid-feedback" *ngIf="descControl.errors?.['minlength']">
-      You must enter at least {{descControl.errors?.['minlength'].requiredLength - descControl.errors?.['minlength'].actualLength}} characters more
+      You must enter at least {{descControl.errors?.['minlength'].requiredLength -
+      descControl.errors?.['minlength'].actualLength}} characters more
     </div>
   </div>
   <div class="mb-3">
     <label for="cuisine">Cuisine</label>
-    <input
-      type="text"
-      class="form-control"
-      name="cuisine"
-      id="cuisine"
-      placeholder="Cuisine"
-      formControlName="cuisineForm"
-      [ngClass]="validClasses(cuisineControl, 'is-valid', 'is-invalid')"
-/>
-    <div class="invalid-feedback"
-      *ngIf="cuisineControl.errors?.['required']"
-    >
+    <input type="text" class="form-control" name="cuisine" id="cuisine" placeholder="Cuisine" formControlName="cuisine"
+      [ngClass]="validClasses(cuisineControl, 'is-valid', 'is-invalid')" />
+    <div class="invalid-feedback" *ngIf="cuisineControl.errors?.['required']">
       Cuisine is required.
     </div>
   </div>
   <p>Opening days</p>
-  <div class="mb-3">
-    <div
-      class="form-check form-check-inline"
-      *ngFor="let day of days; let i = index"
-    >
-      <input
-        type="checkbox"
-        class="custom-control-input"
-        id="checkDay{{ i }}"
-        name="days"
-        formControlName="daysForm"
-        [ngClass]="validClasses(daysControl, 'is-valid', 'is-invalid')"
-
-/>
-      <label class="custom-control-label ms-2" for="checkDay{{ i }}">{{
-        day
-      }}</label>
+  <div class="mb-3" formArrayName="days" oneChecked>
+    <div class="form-check form-check-inline" *ngFor="let day of days; let i = index"
+      [ngClass]="validClasses(daysControl, 'is-valid', 'is-invalid')">
+      <input type="checkbox" name="days" id="checkDay{{ i }}" formControlName="{{i}}" checked>
+      <label class="custom-control-label ms-2" for="checkDay{{ i }}">
+        {{ day }}
+      </label>
     </div>
-    <div class="invalid-feedback" *ngIf="daysControl.errors?.['required']">
+    <br>
+    <div class="invalid-feedback" *ngIf="daysControl.hasError('oneCheckedError')">
       Must select at least 1 day
     </div>
   </div>
   <div class="mb-3">
     <label for="phone">Phone number</label>
-    <input
-      type="text"
-      class="form-control"
-      id="phone"
-      name="phone"
-      placeholder="Phone number"
-      formControlName="phoneForm"
-
-/>
-    <div class="invalid-feedback"
-      *ngIf="cuisineControl.errors?.['required']"
-    >Phone must have 9 numbers.</div>
+    <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone number" formControlName="phone"
+      [ngClass]="validClasses(phoneControl, 'is-valid', 'is-invalid')" />
+    <div class="invalid-feedback" *ngIf="cuisineControl.errors?.['required']">Phone must have 9 numbers.</div>
   </div>
   <div class="mb-3">
     <label for="image">Image</label>
-    <input
-      type="file"
-      class="form-control"
-      id="image"
-      name="image"
-      accept="image/*"
-      #fileImage
-      (change)="changeImage(fileImage)"
-      formControlName="imageForm"
-      [ngClass]="validClasses(imageControl, 'is-valid', 'is-invalid')"
-/>
-    <div class="invalid-feedback"
-    *ngIf="imageControl.errors?.['required']"
-    >An image is required.</div>
+    <input type="file" class="form-control" id="image" name="image" accept="image/*" #fileImage
+      (change)="changeImage(fileImage)" formControlName="image"
+      [ngClass]="validClasses(imageControl, 'is-valid', 'is-invalid')" />
+    <div class="invalid-feedback" *ngIf="imageControl.errors?.['required']">An image is required.</div>
   </div>
-  <img
-    [src]="newRestaurant.image"
-    [ngClass]="{ 'd-none': !newRestaurant.image }"
-    class="img-thumbnail mb-3"
-/>
+  <img [src]="newRestaurant.image" [ngClass]="{ 'd-none': !newRestaurant.image }" class="img-thumbnail mb-3" />
 
   <div>
-    <button 
-            type="submit" 
-            class="btn btn-primary"
-          >
+    <button [disabled]="restaurantForm.invalid" type="submit" class="btn btn-primary">
       {{ editing ? "Edit" : "Create" }}
     </button>
   </div>
 </form>
+<p>{{restaurantForm.value | json}}</p>
+<br>
+<p>
+  {{daysControl.errors?.['oneCheckedError']}}
+</p>

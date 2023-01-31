@@ -1,36 +1,17 @@
 <nav class="navbar navbar-light bg-light justify-content-between mt-3 row">
   <ul class="nav nav-pills col-auto ms-3">
     <li class="nav-item">
-      <a
-        class="nav-link active"
-        [ngClass]="{ active: onlyOpen }"
-        (click)="onlyOpen = !onlyOpen"
-        >Show open</a
-      >
+      <a class="nav-link active" [ngClass]="{ active: onlyOpen }" (click)="onlyOpen = !onlyOpen">Show open</a>
     </li>
   </ul>
   <form class="container-fluid col">
-    <input
-      class="form-control"
-      type="text"
-      name="search"
-      placeholder="Search"
-      aria-label="Search"
-      [(ngModel)]="search"
-    />
+    <input class="form-control" type="text" name="search" placeholder="Search" aria-label="Search"
+      [(ngModel)]="search" />
   </form>
 </nav>
 
-<div
-  id="placesContainer"
-  class="mb-4 mt-4 row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"
->
-  <fs-restaurant-card
-    class="col"
-    *ngFor="let restaurant of restaurants | restaurantFilter: onlyOpen:search"
-    [restaurant]="restaurant"
-    (deleted)="deleteRestaurant(restaurant)"
-    [routerLink]="['/restaurants', restaurant.id]"
-    (click)="goToDetails(restaurant)"
-  ></fs-restaurant-card>
+<div id="placesContainer" class="mb-4 mt-4 row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+  <fs-restaurant-card class="col" *ngFor="let restaurant of restaurants | restaurantFilter: onlyOpen:search"
+    [restaurant]="restaurant" (deleted)="deleteRestaurant(restaurant)" [routerLink]="['/restaurants', restaurant.id]"
+    (click)="goToDetails(restaurant)"></fs-restaurant-card>
 </div>

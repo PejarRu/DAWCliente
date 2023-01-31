@@ -1,6 +1,6 @@
 <div class="mt-4">
   <div class="card h-100 shadow" id="{{ restaurant.id }}">
-    <img class="card-img-top" src="{{ restaurant.image }}" />
+    <img class="card-img-top" src="{{ restaurant.image }}" style="max-height: 375px; object-fit: cover;"/>
     <div class="card-body">
       <button class="btn btn-danger btn-sm float-end" (click)="delete()">
         Delete
