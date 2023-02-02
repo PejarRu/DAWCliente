@@ -22,6 +22,5 @@ export const APP_ROUTES: Routes = [
     // IF ROUTE DOES NOT MATCH ANY ABOVE, REDIRECT TO /auth/login
     path: '**',
     redirectTo: 'auth/login',
-    pathMatch: 'full',
   },
 ];

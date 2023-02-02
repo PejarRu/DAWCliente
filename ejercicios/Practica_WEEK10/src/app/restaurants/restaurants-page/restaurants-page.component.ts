@@ -60,9 +60,4 @@ export class RestaurantsPageComponent implements OnInit {
     );
     this.restaurants = this.restaurants.filter((r) => r !== restaurant);
   }
-
-  goToDetails(restaurant: Restaurant) {
-    let id = Number(restaurant.id);
-    this.router.navigate(['restaurants/' + id]);
-  }
 }

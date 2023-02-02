@@ -44,18 +44,15 @@ export class RestaurantsService {
       );
   }
 
-  deleteRestaurants(id: number): Observable<Restaurant> {
-    return this.http.delete<ResponseRestaurant>(`${this.restaurantURL}/${id}`)
-      .pipe(
-        map((response) => response.restaurant)
-      );
-  }
-
   editRestaurant(restaurant: Restaurant): Observable<void> {
     return this.http.put<void>
       (`${this.restaurantURL}/${restaurant.id}`,
         restaurant
       );
+  }
+
+  deleteRestaurants(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.restaurantURL}/${id}`);
   }
   /*
   changeRating(idRestaurant: number, rating: number): Observable<void> {

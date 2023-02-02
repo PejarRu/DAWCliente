@@ -13,5 +13,5 @@
 <div id="placesContainer" class="mb-4 mt-4 row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
   <fs-restaurant-card class="col" *ngFor="let restaurant of restaurants | restaurantFilter: onlyOpen:search"
     [restaurant]="restaurant" (deleted)="deleteRestaurant(restaurant)" [routerLink]="['/restaurants', restaurant.id]"
-    (click)="goToDetails(restaurant)"></fs-restaurant-card>
+    ></fs-restaurant-card>
 </div>

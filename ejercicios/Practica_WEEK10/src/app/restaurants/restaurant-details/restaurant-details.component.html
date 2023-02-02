@@ -1,12 +1,13 @@
-<fs-restaurant-card
+<div class="mt-4">
+  <fs-restaurant-card
   class="col"
   *ngIf="restaurant"
   [restaurant]="restaurant"
   (deleted)="deleteRestaurant(restaurant)"
-
-></fs-restaurant-card>
+  ></fs-restaurant-card>
+</div>
 <div class="card-block p-3 text-center"></div>
-<div class="mt-3">
+<div class="mt-4 mb-4">
   <button type="button" class="btn btn-primary" (click)="goBack()">
     Go back
   </button>

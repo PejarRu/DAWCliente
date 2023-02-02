@@ -4,7 +4,15 @@
     <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" formControlName="name"
       [ngClass]="validClasses(nameControl, 'is-valid', 'is-invalid')" />
     <div class="invalid-feedback" *ngIf="restaurantForm.get('name')?.touched && restaurantForm.get('name')?.invalid">
+    </div>
+    <div class="invalid-feedback" *ngIf="nameControl.errors?.['required'] ">
+      Name is required.
+    </div>
+    <div class="invalid-feedback" *ngIf=" nameControl.errors?.['pattern']">
       Name can only contain letters and spaces and start with a letter.
+    </div>
+    <div class="invalid-feedback" *ngIf="nameControl.errors?.['minlength']">
+      Name must be at least {{nameControl.errors?.['minlength'].requiredLength - nameControl.errors?.['minlength'].actualLength}} characters more
     </div>
   </div>
   <div class="mb-3">
@@ -45,7 +53,12 @@
     <label for="phone">Phone number</label>
     <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone number" formControlName="phone"
       [ngClass]="validClasses(phoneControl, 'is-valid', 'is-invalid')" />
-    <div class="invalid-feedback" *ngIf="cuisineControl.errors?.['required']">Phone must have 9 numbers.</div>
+    <div class="invalid-feedback" *ngIf="phoneControl.errors?.['required'] ">
+      Phone is required.
+    </div>
+    <div class="invalid-feedback" *ngIf=" phoneControl.errors?.['pattern']">
+      Phone must have 9 numbers.
+    </div>
   </div>
   <div class="mb-3">
     <label for="image">Image</label>
@@ -62,8 +75,11 @@
     </button>
   </div>
 </form>
+<!--
+  DEBUGGING
 <p>{{restaurantForm.value | json}}</p>
 <br>
-<p>
-  {{daysControl.errors?.['oneCheckedError']}}
-</p>
+  <p>
+    {{daysControl.errors?.['oneCheckedError']}}
+  </p>
+-->

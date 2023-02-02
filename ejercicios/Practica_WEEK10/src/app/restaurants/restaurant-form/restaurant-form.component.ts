@@ -31,15 +31,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
   //Constants
   daysOpen: boolean[] = new Array(7).fill(true);
   days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  /*days = [
-    { id: 0, select: false, value: 'Sun' },
-    { id: 1, select: true, value: 'Mon' },
-    { id: 2, select: true, value: 'Tue' },
-    { id: 3, select: true, value: 'Wed' },
-    { id: 4, select: true, value: 'Thu' },
-    { id: 5, select: true, value: 'Fri' },
-    { id: 6, select: true, value: 'Sat' },
-  ];*/
+
   //Emitters
   @Output() add = new EventEmitter<Restaurant>();
   //Values to initialize
@@ -60,9 +52,9 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
 
   constructor(
     private readonly restaurantsService: RestaurantsService,
-    private route: ActivatedRoute,
     private readonly router: Router,
-    private fb: NonNullableFormBuilder
+    private route: ActivatedRoute,
+    private fb: NonNullableFormBuilder,
   ) {
     this.newRestaurant = this.resetRestaurant();
 
@@ -74,6 +66,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
     this.nameControl = this.fb.control('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+      Validators.minLength(3),
     ]);
     this.descControl = this.fb.control('', [
       Validators.required,

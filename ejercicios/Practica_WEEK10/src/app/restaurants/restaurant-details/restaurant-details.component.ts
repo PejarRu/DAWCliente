@@ -17,18 +17,21 @@ export class RestaurantDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private restaurantsService: RestaurantsService,
-    private router: Router
   ) {}
 
   ngOnInit(): void {
     const id = +this.route.snapshot.params['id'];
-
+    this.route.data.subscribe((data) => (this.restaurant = data['restaurant']));
+    //El siguiente codigo realiza una segunda peticion al servidor
+    /*
     this.restaurantsService.getRestaurant(id).subscribe({
       next: (rest) => (this.restaurant = rest),
       error: (error) => console.error(error),
       complete: () => console.log(`Restaurant ${id} loaded`),
     });
+    */
   }
 
   deleteRestaurant(restaurant: Restaurant) {
@@ -38,7 +41,7 @@ export class RestaurantDetailsComponent implements OnInit {
       () => {},
       (error) => console.log(error)
     );
-    this.router.navigate(['/restaurants']);
+    this.goBack();
   }
 
   goBack() {
@@ -47,7 +50,7 @@ export class RestaurantDetailsComponent implements OnInit {
   /*
   // WE IMPLEMENT THE EDIT METHOD TO ROUTE TO EDIT FORM
   edit() {
-    this.router.navigate(['/restaurants', this.restaurant.id, 'edit']); 
+    this.router.navigate(['/restaurants', this.restaurant.id, 'edit']);
       // NOTICE ARRAY NOW HAS 3 ELEM, SO URL WOULD BE /restaurants/id/edit
   }
   */
