@@ -1,0 +1,104 @@
+<div class="container">
+  <form [formGroup]="registerForm" (ngSubmit)="registerNewUser()" emailMatch class="mt-4">
+    <legend>Create an account</legend>
+
+    <div class="mb-3">
+      <label for="name">Name:</label>
+      <input type="text" class="form-control" formControlName="name" placeholder="Name" />
+      <div class="text-danger" *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched)">
+        <div *ngIf="nameControl.errors.required">
+          Name is required
+        </div>
+        <div *ngIf="nameControl.errors.pattern">
+          Name must contain only letters and spaces, and start with a letter
+        </div>
+        <div *ngIf="nameControl.errors.minlength">
+          Name must be at least 3 characters long
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" formControlName="email" placeholder="Email" />
+      <div class="text-danger" class="text-danger"
+        *ngIf="emailControl.invalid && (emailControl.dirty || emailControl.touched)">
+        <div *ngIf="emailControl.errors.required || emailControl.errors.email">
+          An @email is required
+        </div>
+      </div>
+    </div>
+    <div class="mb-3" emailMatch>
+      <label for="emailRep">Repeat Email:</label>
+      <input type="email" id="emailRep" class="form-control" formControlName="emailRep" placeholder="Repeat Email" />
+
+      <div class="text-danger" *ngIf="emailRepControl.invalid && (emailRepControl.dirty || emailRepControl.touched)">
+        <div *ngIf="emailRepControl.errors.required || emailRepControl.errors.email">
+          An @email is required
+        </div>
+        <div *ngIf="emailRepControl.errors.emailMatch">
+          Emails must match.
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" formControlName="password" placeholder="Password" />
+      <div class="text-danger" *ngIf="passwordControl.invalid && (passwordControl.dirty || passwordControl.touched)">
+        <div *ngIf="passwordControl.errors.required">
+          Password is required
+        </div>
+        <div *ngIf="passwordControl.errors.minlength">
+          Password must be at least 4 characters long
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="mb-3 col">
+        <label for="lat">Latitude:</label>
+        <input type="text" class="form-control" formControlName="lat" placeholder="Geolocating..." readonly />
+      </div>
+      <div class="mb-3 col">
+        <label for="lng">Longitude:</label>
+        <input type="text" class="form-control" formControlName="lng" placeholder="Geolocating..." readonly />
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="image">Avatar image: </label>
+      <input type="file" class="form-control" id="image" name="image" accept="image/*" #fileImage
+        (change)="changeImage(fileImage)" formControlName="avatar"
+        [ngClass]="validClasses(avatarControl, 'is-valid', 'is-invalid')" />
+      <div class="invalid-feedback" *ngIf="avatarControl.errors?.['required']">An avatar image is required.</div>
+    </div>
+    <img [hidden]="true" [src]="newUser.avatar" [ngClass]="{ 'd-none': !newUser.avatar }" class="img-thumbnail mb-3" />
+    <p class="text-danger" *ngIf="avatarControl.touched && avatarControl.invalid">Please select an avatar image</p>
+
+    <div class="mb-3">
+      <button type="submit" class="btn btn-primary">Create account</button>
+    </div>
+
+    <div class="text-center">
+      <p>Alredy have an account?
+        <a class="btn btn-link m-1" role="button" routerLink="/auth/login">Login</a>
+      </p>
+
+      <p>or try sign up with:</p>
+
+      <a class="m-2" routerLink="/auth/login" routerLinkActive="router-link-active">
+        <fa-icon [icon]="icons.faGoogle"></fa-icon>
+      </a>
+      <a class="m-2" routerLink="/auth/login" routerLinkActive="router-link-active">
+        <fa-icon [icon]="icons.faFacebook"></fa-icon>
+      </a>
+    </div>
+  </form>
+</div>
+DEBUGGING
+<p>{{registerForm.value | json}}</p>
+<br>
+<p>
+  Email match: {{emailRepControl.errors?.['emailMatch']}}
+</p>
