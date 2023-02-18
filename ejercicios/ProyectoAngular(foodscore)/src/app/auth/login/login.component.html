@@ -1,0 +1,57 @@
+<div class="container d-flex flex-column col-8">
+  <form class="mt-4" (submit)="checkLogin()" #loginForm="ngForm">
+
+    <legend class="text-center">Welcome to FoodScore!</legend>
+
+    <div class="mb-3">
+      <label for="email">Email:</label>
+      <input type="text" class="form-control" id="email" name="email" placeholder="example@example.com"
+        [(ngModel)]="email" required>
+
+    </div>
+    <div class="mb-3">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password" required>
+
+    </div>
+
+    <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" class="btn btn-primary col-12  m-auto">Login</button>
+  </form>
+  <div class="text-center">
+    <p>Not a member?
+      <a class="btn btn-link m-1" role="button" routerLink="/auth/register">Create account</a>
+    </p>
+
+    <p>or sign up with:</p>
+    <div class=""></div>
+    <button appGoogleLogin type="button" class="btn btn-link m-1" (loginOk)="loggedGoogle($event)">
+      <fa-icon [icon]="icons.faGoogle"></fa-icon>
+    </button>
+    <button appFbLogin class="btn btn-link" [scopes]="['email', 'public_profile']" (loginOk)="loggedFacebook($event)"
+      (loginError)="showError($event)">
+      <fa-icon [icon]="icons.faFacebook"></fa-icon>
+    </button>
+  </div>
+</div>
+<br>
+Debugger
+<br>
+<div>
+  Google:
+  <p>{{userInfo.name}}</p>
+  <p>{{userInfo.email}}</p>
+  <p><img [src]="userInfo.image" alt=""></p>
+  <p>{{userInfo.token}}</p>
+</div>
+<div>
+  Fb:
+  <p>{{fbUserInfo.token}}</p>
+  <p>{{fbUserInfo.userId}}</p>
+</div>
+<div>
+  Classic:
+  <p>{{fbUserInfo.token}}</p>
+  <p>{{fbUserInfo.userId}}</p>
+</div>
