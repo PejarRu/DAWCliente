@@ -12,7 +12,7 @@
       Name can only contain letters and spaces and start with a letter.
     </div>
     <div class="invalid-feedback" *ngIf="nameControl.errors?.['minlength']">
-      Name must be at least {{nameControl.errors?.['minlength'].requiredLength - nameControl.errors?.['minlength'].actualLength}} characters more
+      Name must be at least {{nameControl.errors?.['minlength'].requiredLength -nameControl.errors?.['minlength'].actualLength}} characters more
     </div>
   </div>
   <div class="mb-3">
@@ -60,6 +60,24 @@
       Phone must have 9 numbers.
     </div>
   </div>
+  <!-- ADRESS INPUT -->
+
+  <div class="mb-3">
+    <label for="address">Address</label>
+    <!--
+    <input placeholder="C/Caritama, 32, Bonabo, Isru" type="text" class="form-control" id="address" readOnly="true" name="address" formControlName="address">
+    -->
+    <input placeholder="C/Caritama, 32, Bonabo, Isru" type="text" class="form-control" id="address" name="address"
+    formControlName="address" [ngClass]="validClasses(addressControl, 'is-valid', 'is-invalid')">
+    <div class="invalid-feedback" *ngIf="addressControl.invalid && addressControl.touched">
+      Address is required.
+    </div>
+  </div>
+  <arcgis-map [coords]="[newRestaurant.lng, newRestaurant.lat]">
+    <arcgis-marker [coords]="[newRestaurant.lng, newRestaurant.lat]" color="red"></arcgis-marker>
+    <arcgis-search position="top-right" (result)="searchResult($event)"></arcgis-search>
+  </arcgis-map>
+  <!-- IMAGE INPUT -->
   <div class="mb-3">
     <label for="image">Image</label>
     <input type="file" class="form-control" id="image" name="image" accept="image/*" #fileImage

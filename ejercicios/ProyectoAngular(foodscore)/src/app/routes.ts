@@ -12,18 +12,18 @@ export const APP_ROUTES: Routes = [
     canActivate: [LogoutActivateGuard],
   },
   {
-    path: 'restaurants',
-    loadChildren: () =>
-      import('./restaurants/restaurants-routes').then(
-        (m) => m.RESTAURANTS_ROUTES
-      ),
-    canActivate: [LoginActivateGuard],
-  },
-  {
     path: 'users',
     loadChildren: () =>
       import('./users/users-routes').then(
         (m) => m.USERS_ROUTES
+      ),
+    canActivate: [LoginActivateGuard],
+  },
+    {
+    path: 'restaurants',
+    loadChildren: () =>
+      import('./restaurants/restaurants-routes').then(
+        (m) => m.RESTAURANTS_ROUTES
       ),
     canActivate: [LoginActivateGuard],
   },

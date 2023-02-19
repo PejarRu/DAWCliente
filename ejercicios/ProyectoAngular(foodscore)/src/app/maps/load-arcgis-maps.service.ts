@@ -20,10 +20,10 @@ export class LoadArcgisMapsService {
   async getMapView(
     mapDiv: HTMLDivElement,
     coords: { latitude: number; longitude: number },
-    zoom = 14
+    zoom = 10
   ) {
     const { default: Map } = await import('@arcgis/core/Map');
-    const map = new Map({ basemap: 'osm-streets-relief' });
+    const map = new Map({ basemap: 'satellite' });
     const { default: MapView } = await import('@arcgis/core/views/MapView');
     return new MapView({
       map: map,
@@ -62,10 +62,12 @@ export class LoadArcgisMapsService {
     position: string
   ) {
     const { default: Search } = await import('@arcgis/core/widgets/Search');
+
     const search = new Search({
       view: mapView,
       popupEnabled: false,
     });
+
     mapView.ui.add(search, position);
     return search;
   }

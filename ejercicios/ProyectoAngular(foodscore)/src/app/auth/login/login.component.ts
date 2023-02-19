@@ -30,6 +30,8 @@ export class LoginPageComponent {
     this.email = '';
     this.password = '';
     this.location = { lat: 0, lng: 0 }
+    console.log('login page');
+
   }
 
   checkLogin() {

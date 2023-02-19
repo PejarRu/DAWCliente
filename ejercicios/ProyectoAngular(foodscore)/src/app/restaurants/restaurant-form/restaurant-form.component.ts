@@ -14,7 +14,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CanDeactivateComponent } from 'src/app/guards/leave-page.guard';
 //Custom Validators
 import { OneCheckedDirective } from 'src/app/shared/validators/one-is-checked.directive';
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
+import { ArcgisMapComponent } from 'src/app/maps/arcgis-map/arcgis-map.component';
+import { ArcgisMarkerDirective } from 'src/app/maps/arcgis-marker/arcgis-marker.directive';
+import { ArcgisSearchDirective } from 'src/app/maps/arcgis-search/arcgis-search.directive';
+import { SearchResult } from 'src/app/maps/interfaces/search-result';
 @Component({
   selector: 'fs-restaurant-form',
   standalone: true,
@@ -22,6 +26,9 @@ import Swal from "sweetalert2";
     CommonModule,
     ReactiveFormsModule,
     OneCheckedDirective,
+    ArcgisMapComponent,
+    ArcgisMarkerDirective,
+    ArcgisSearchDirective,
   ],
   templateUrl: './restaurant-form.component.html',
   styleUrls: ['./restaurant-form.component.css'],
@@ -39,7 +46,9 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
   //Variables utilities
   saved = false;
   editing = false;
-
+  latitude: number = 0;
+  longitude: number = 0;
+  inputAddress = " ";
   // FORM OBJECT
   restaurantForm!: FormGroup;
   daysControl!: FormArray;
@@ -49,6 +58,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
   phoneControl!: FormControl<string>;
   cuisineControl!: FormControl<string>;
   imageControl!: FormControl<string>;
+  addressControl!: FormControl<string>;
 
   constructor(
     private readonly restaurantsService: RestaurantsService,
@@ -61,7 +71,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
   }
 
   ngOnInit(): void {
-
+    this.getGeolocation()
     // ADD VALIDATORS TO EACH CONTROL ELEMENT
     this.nameControl = this.fb.control('', [
       Validators.required,
@@ -77,6 +87,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
     ]);
     this.cuisineControl = this.fb.control('', [Validators.required,]);
     this.daysControl = this.fb.array([], [Validators.required,])
+    this.addressControl = this.fb.control('', [Validators.required,]);
     this.imageControl = this.fb.control('', [Validators.required,]);
     this.days.forEach((day) => {
       this.daysControl.push(this.fb.control(false));
@@ -89,6 +100,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
       cuisine: this.cuisineControl,
       phone: this.phoneControl,
       days: this.daysControl,
+      address: this.addressControl,
       image: this.imageControl,
     });
 
@@ -105,6 +117,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
           cuisine: this.newRestaurant.cuisine,
           phone: this.newRestaurant.phone,
           days: this.newRestaurant.daysOpen,
+          address: this.newRestaurant.address,
           image: this.newRestaurant.image,
         });
       } else {
@@ -114,12 +127,33 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
     });
   }
 
+  getGeolocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        this.newRestaurant.lat = position.coords.latitude;
+        this.newRestaurant.lng = position.coords.longitude;
+      });
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  }
+
+  searchResult(result: SearchResult) {
+    console.log(result);
+
+    this.addressControl.setValue(result.address);
+    this.newRestaurant.address = result.address;
+    this.newRestaurant.lat = result.latitude;
+    this.newRestaurant.lng = result.longitude;
+  }
+
   addRestaurant() {
     if (this.restaurantForm.valid) {
       this.newRestaurant.name = this.nameControl.value;
       this.newRestaurant.description = this.descControl.value;
       this.newRestaurant.cuisine = this.cuisineControl.value;
       this.newRestaurant.phone = this.phoneControl.value;
+      this.newRestaurant.address = this.addressControl.value;
       this.newRestaurant.daysOpen = this.daysControl.value;
     }
     this.newRestaurant.daysOpen = this.daysOpen
@@ -146,7 +180,7 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
             text: 'Your restaurant has been successfully created.',
             icon: 'success',
             confirmButtonText: 'OK'
-            })
+          })
 
           this.router.navigate(['/restaurants']);
         },
@@ -155,10 +189,10 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
 
           Swal.fire({
             title: 'Could not create new restaurant',
-            text: error.message,
+            text: 'Some error have ocurred. We are sorry',
             icon: 'warning',
             confirmButtonText: 'OK'
-            })
+          })
 
 
         },

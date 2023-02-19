@@ -53,7 +53,7 @@ export class RestaurantsService {
   */
   edit(restaurant: Restaurant): Observable<Restaurant> {
     return this.http
-      .put<RestaurantResponse>('restaurants', restaurant)
+      .put<RestaurantResponse>(`restaurants/${restaurant.id}`, restaurant)
       .pipe(map((r) => r.restaurant));
   }
 

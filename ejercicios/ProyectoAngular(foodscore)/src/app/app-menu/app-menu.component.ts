@@ -27,6 +27,11 @@ export class AppMenuComponent {
       this.isLoggedIn = loggedIn;
     });
   }
+  onClickLogin(): void {
+    console.log('Login clicked');
+
+  }
+
   onClickLogout(): void {
     console.log('Logged out');
 

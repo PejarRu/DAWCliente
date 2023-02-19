@@ -14,7 +14,7 @@ import { Observable } from 'rxjs';
 import { ArcgisMapComponent } from 'src/app/maps/arcgis-map/arcgis-map.component';
 import { ArcgisMarkerDirective } from 'src/app/maps/arcgis-marker/arcgis-marker.directive';
 import { ArcgisSearchDirective } from 'src/app/maps/arcgis-search/arcgis-search.directive';
-import { SearchResult } from 'src/app/maps/interfaces/search-result';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'fs-restaurant-details',
@@ -35,6 +35,7 @@ export class RestaurantDetailsComponent implements OnInit {
   restaurant!: Restaurant;
   comments: Comment[] = [];
   mine = false;
+  comented = true;
   address: string;
   latitude: number;
   longitude: number;
@@ -89,6 +90,8 @@ export class RestaurantDetailsComponent implements OnInit {
         console.log(this.comments);
       },
     });
+
+    this.comented = this.restaurant.commented ?? true;
   }
 
   deleteRestaurant(restaurantId: number) {
@@ -111,6 +114,16 @@ export class RestaurantDetailsComponent implements OnInit {
     */
   }
   addNewComment(newComment: Comment) {
+    if(this.comented) {
+      Swal.fire({
+        title: 'You have alredy commented on this restaurant',
+        text: 'Only 1 comment restaurant allowed',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      })
+      return
+
+    }
     newComment.date = new Date().toString();
     newComment.restaurant = this.restaurant.id;
     /*

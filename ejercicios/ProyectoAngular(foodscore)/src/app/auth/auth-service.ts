@@ -98,14 +98,15 @@ export class AuthService {
   }
 
   isLogged(): Observable<boolean> {
-    if (!this.logged && !this.getToken()) {
-      //Both are not OK!
-      return of(false);
-    }
     if (this.logged && this.getToken()) {
       //Both are OK!
       return of(true);
     }
+    if (!this.logged && !this.getToken()) {
+      //Both are not OK!
+      return of(false);
+    }
+
     if (!this.logged && this.getToken()) {
       //Logged = false, but token exist
     }

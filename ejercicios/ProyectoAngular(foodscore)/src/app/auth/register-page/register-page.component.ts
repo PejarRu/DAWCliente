@@ -8,7 +8,7 @@ import { CanDeactivateComponent } from 'src/app/guards/leave-page.guard';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGoogle, faFacebook } from '@fortawesome/free-brands-svg-icons';
 import { EmailMatchValidator, emailMatchValidator } from '../validators/email-match.validator';
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2';
 import { passwordMatchingValidator } from '../validators/password-confirm.validator';
 
 @Component({
@@ -106,9 +106,9 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
 
 
     this.route.data.subscribe((data: { [x: string]: User; }) => {
-      if (data['user']) {
+      if (data['restaurant']) {
         this.editing = true;
-        this.newUser = data['user'];
+        this.newUser = data['restaurant'];
 
         // LOAD RESTAURANT VALUES IN EACH INPUT ELEMENT
         this.registerForm.patchValue({
@@ -116,6 +116,7 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
           email: this.newUser.email,
           avatar: this.newUser.avatar,
           password: this.newUser.password,
+          address: this.newUser.password,
           lat: this.newUser.lat,
           lng: this.newUser.lng,
         });

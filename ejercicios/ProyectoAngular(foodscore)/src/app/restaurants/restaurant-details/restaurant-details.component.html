@@ -4,21 +4,23 @@
 </div>
 <!-- MAP SECTION -->
 <div class="card mt-4" *ngIf="restaurant.address">
-  <div class="card-header bg-success text-white" id="address">Restaurant's address</div>
+  <div class="card-header bg-success text-white">
+    Restaurant's address: {{restaurant.address}}
+  </div>
   <arcgis-map [coords]="[longitude, latitude]">
     <arcgis-marker
     [coords]="[longitude, latitude]"
     color="red"
     ></arcgis-marker>
    </arcgis-map>
-   {{restaurant.address}}
+
 </div>
 <!-- CREATOR SECTION -->
 <div class="card mt-4" id="creatorCard" *ngIf="restaurant.creator">
-  <div class="card-header bg-danger text-white">Restaurant's owner</div>
+  <div class="card-header bg-danger text-white" [routerLink]="['/users', restaurant.creator]">Restaurant's owner</div>
   <div class="card-body d-flex flex-row">
     <div>
-      <img class="rounded-circle me-3" style="width: 40px;" [src]="restaurant.creator.avatar" alt="">
+      <img class="rounded-circle me-3" style="max-height: 80px; max-width: 80px;" [src]="restaurant.creator.avatar" alt="">
     </div>
     <div>
       <div><strong id="creatorName"></strong>{{restaurant.creator.name}}</div>
@@ -37,7 +39,7 @@
 </ul>
 
 <!--COMMENT FORM PART -->
-<fs-comment-form (addComment)="addNewComment($event)"></fs-comment-form>
+<fs-comment-form *ngIf="!comented" (addComment)="addNewComment($event)"></fs-comment-form>
 
 
 <div class="mt-4 mb-4 d-flex justify-content-between">
@@ -47,7 +49,10 @@
     </button>
   </div>
   <div *ngIf="restaurant && restaurant.mine">
-    <button type="button" class="btn btn-secondary ms-3"[routerLink]="['/restaurants', restaurant.id, 'edit']" routerLinkActive="router-link-active" >Edit</button>
+    <!--
+      <a type="button" class="btn btn-secondary ms-3" [routerLink]="['/restaurants/'+ restaurant.id, 'edit']" routerLinkActive="router-link-active" >Edit</a>
+    -->
+    <a type="button" class="btn btn-secondary ms-3" [routerLink]="['/restaurants', restaurant.id, 'edit']">Edit</a>
     <button type="button" class="btn btn-danger ms-3" (click)="deleteRestaurant(restaurant.id)">Delete</button>
   </div>
 </div>
