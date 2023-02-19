@@ -7,8 +7,9 @@ import { RestaurantFilterPipe } from '../pipes/restaurant-filter.pipe';
 import { RestaurantCardComponent } from '../restaurant-card/restaurant-card.component';
 import { RestaurantFormComponent } from '../restaurant-form/restaurant-form.component';
 import { RestaurantsService } from '../services/restaurant-service';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../auth/auth-service';
 
 @Component({
   selector: 'fs-restaurants-page',
@@ -19,7 +20,7 @@ import Swal from 'sweetalert2';
     RouterModule,
     RestaurantCardComponent,
     RestaurantFormComponent,
-    RestaurantFilterPipe
+    RestaurantFilterPipe,
   ],
   templateUrl: './restaurants-page.component.html',
   styleUrls: ['./restaurants-page.component.css'],
@@ -28,18 +29,61 @@ export class RestaurantsPageComponent implements OnInit {
   restaurants: Restaurant[] = [];
   onlyOpen = false;
   search = '';
+  creatorId = '';
+  creatorName: string = '';
   constructor(
     private readonly restaurantsService: RestaurantsService,
-    private router: Router
+    private readonly authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
+  // Initialize the component
   ngOnInit() {
-    this.restaurantsService.getAll().subscribe({
+    // Get the creator id from the query parameters
+    this.route.queryParamMap.subscribe((params) => {
+      this.creatorId = params.get('creator') ?? '';
+      // Load restaurants for the creator, if the creator id is provided
+      if (this.creatorId && this.creatorId != '') {
+        this.loadRestaurantsByUser(
+          this.creatorId as unknown as number);
+      }
+      // Otherwise, load all restaurants
+      else {
+        this.loadAllRestaurants();
+      }
+    });
+  }
 
-      next: (rests) => (
-        this.restaurants = rests),
+  // Load all restaurants
+  loadAllRestaurants() {
+    this.restaurantsService.getAll().subscribe({
+      next: (rests) => {
+        this.restaurants = rests;
+      },
       error: (error) => console.error(error),
       complete: () => console.log('Restaurants loaded'),
+    });
+  }
+
+  // Load restaurants for a specific creator
+  loadRestaurantsByUser(creatorId: number) {
+    // Get the user's name using the auth service
+    this.authService.getProfile(creatorId).subscribe({
+      next: (user) => {
+        this.creatorName = user.name;
+      },
+      error: (error) => console.error(error),
+      complete: () => console.log('User profile loaded'),
+    });
+
+    // Get the user's restaurants using the restaurant service
+    this.restaurantsService.getByUser(creatorId).subscribe({
+      next: (rests) => {
+        this.restaurants = rests;
+      },
+      error: (error) => console.error(error),
+      complete: () => console.log('Restaurants from user (' + creatorId + ') loaded'),
     });
   }
 

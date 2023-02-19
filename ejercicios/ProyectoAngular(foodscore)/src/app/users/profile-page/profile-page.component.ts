@@ -1,14 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Query } from '@angular/core';
 import { User } from 'src/app/interfaces/user';
 import { AuthService } from 'src/app/auth/auth-service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule, NgIf } from '@angular/common';
 import Swal from 'sweetalert2';
+import { ArcgisMapComponent } from '../../maps/arcgis-map/arcgis-map.component';
+import { ArcgisMarkerDirective } from '../../maps/arcgis-marker/arcgis-marker.directive';
+import { ArcgisSearchDirective } from 'src/app/maps/arcgis-search/arcgis-search.directive';
 
 @Component({
   selector: 'fs-profile-page',
   standalone: true,
-  imports: [NgIf, CommonModule],
+  imports: [
+    NgIf,
+    CommonModule,
+    ArcgisMapComponent,
+    ArcgisMarkerDirective,
+    ArcgisSearchDirective,
+    RouterLink
+  ],
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.css']
 })
@@ -16,21 +26,30 @@ export class ProfilePageComponent implements OnInit {
 
   user!: User;
   me = false;
+  latitude: number;
+  longitude: number;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
-  ) { }
+  ) {
+    this.latitude = 0
+    this.longitude = 0;
+  }
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
 
     this.route.data.subscribe((data) => (this.user = data['user']));
 
     //Load the restaurant data
-    this.authService.getProfile().subscribe({
-      next: (user) => (
+    this.authService.getProfile(id).subscribe({
+      next: (user) => {
         this.user = user
-      ),
+        console.log(user);
+        this.latitude = user.lat;
+        this.longitude = user.lng;
+        this.me = user.me ?? false;
+      },
       error: (error) => {
         console.error(error)
         Swal.fire({
@@ -42,59 +61,10 @@ export class ProfilePageComponent implements OnInit {
         //this.router.navigate(['/restaurants']);
 
       },
-      complete: () => console.log(`User ${id} loaded`),
+      complete: () => console.log('User ' + id ?? '' + 'loaded'),
     });
     console.log(this.user);
-
-    if (this.user?.me) {
-      this.me = true;
-    }
-      /*
-      //Check id user id match with creator
-      let me = (this.authService.getLoguedUserData())
-      if (this.restaurant.creator == me) {
-
-      }
-      */
-    }
+    console.log('me: ?');
   }
-
-  /*
-  async getUser(): Promise<void> {
-
-    const params = new URLSearchParams(window.location.search);
-    //const id = params.get('id') as unknown as number;
-    const id = +this.route.snapshot.params['id'];
-
-    if (id) {
-      this.user = await this.authService.getProfile(id) ;
-    } else {
-      this.user = await this.authService.getProfile();
-    }
-    this.showUserProfile();
-    this.showMap();
-  }
-*/
-  /*
-    private showUserProfile(): void {
-      const container = document.getElementById("profile") as HTMLDivElement;
-      //container.replaceChildren(this.userService.userToHTML(this.user));
-    }
-  */
-  /*
-    private async showMap(): Promise<void> {
-      const coords:
-        {
-          latitude: number,
-          longitude: number
-        } = {
-        latitude: this.user.lat,
-        longitude: this.user.lng
-      };
-      //const mapService = MapService.createMapService(coords, "map");
-      //mapService.createMarker(coords, "red");
-
-      //const mapView = mapService.getMapView();
-    }
-    */
+}
 

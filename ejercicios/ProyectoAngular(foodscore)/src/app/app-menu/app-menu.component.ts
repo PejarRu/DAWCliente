@@ -23,11 +23,14 @@ export class AppMenuComponent {
   }
 
   ngOnInit(): void {
-
+    this.authService.loginChange$.subscribe(loggedIn => {
+      this.isLoggedIn = loggedIn;
+    });
   }
   onClickLogout(): void {
+    console.log('Logged out');
+
     this.authService.logout()
-    this.isLoggedIn = false;
   }
 
 }

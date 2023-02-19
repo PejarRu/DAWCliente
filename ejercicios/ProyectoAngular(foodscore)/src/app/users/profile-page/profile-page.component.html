@@ -12,8 +12,19 @@
         <p *ngIf="me">
           <a [routerLink]="['users/edit']" routerLinkActive="router-link-active" class="btn btn-primary">Edit profile</a>
         </p>
+        <p>
+          <a [routerLink]="['/restaurants']" [queryParams]="{ creator: user.id }">See owned restaurants</a>
+        </p>
       </div>
     </div>
   </div>
-  <div class="mt-4" id="map"></div>
+  <div class="card mt-4" *ngIf="user.lat && user.lng">
+    <div class="card-header bg-success text-white" id="address">User location</div>
+    <arcgis-map [coords]="[longitude, latitude]">
+      <arcgis-marker
+      [coords]="[longitude, latitude]"
+      color="red"
+      ></arcgis-marker>
+     </arcgis-map>
+  </div>
 </div>

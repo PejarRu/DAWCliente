@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, throwError, from, BehaviorSubject, map } from 'rxjs';
+import { Observable, throwError, from, BehaviorSubject, map, ReplaySubject, catchError, of, tap } from 'rxjs';
 import { SERVER } from '../shared/constants';
 import { User } from '../interfaces/user';
-import { UserResponse } from '../shared/intefaces/responses';
+import { UserResponse, TokenResponse } from '../shared/intefaces/responses';
 import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
@@ -11,15 +11,33 @@ export class AuthService {
   private readonly apiUrl = '';
   private tokenKey = 'access_token';
   private logged: boolean = false
-  /*
-  private userData: User;´
-  */
-  constructor(private readonly http: HttpClient) { }
+  loginChange$ = new ReplaySubject<boolean>(1)
 
+  constructor(private readonly http: HttpClient) { }
+  /*
+    login(email: string, password: string, lat?: number, lng?: number): Observable<any> {
+      const data = { email, password, ...(lat && { lat }), ...(lng && { lng }) };
+      let result = from(this.http
+        .post(`/auth/login`, data)) as Observable<any>;
+      console.log(result);
+
+      return result;
+    }
+    */
+  login(email: string, password: string, lat?: number, lng?: number): Observable<void> {
+    const data = { email, password, ...(lat && { lat }), ...(lng && { lng }) };
+    return this.http.post<TokenResponse>(`${this.apiUrl}/auth/login`, data)
+      .pipe(
+        map(response => {
+          this.setToken(response.accessToken);
+          this.logged = true;
+          this.loginChange$.next(true);
+        }),
+        catchError((error: any) => throwError(error))
+      );
+  }
 
   register(user: User | { name: string, email: string, password: string, avatar: string, lat: number, lng: number }): Observable<any> {
-    const url = `/auth/register`;
-
     let data: any = {};
     if (typeof user === 'object') {
       data = user;
@@ -28,24 +46,14 @@ export class AuthService {
       data = { name, email, password, avatar, lat, lng };
     }
 
-    return from(this.http.post(url, data)) as Observable<any>;
+    return from(this.http.post(`/auth/register`, data)) as Observable<any>;
   }
 
-  login(email: string, password: string, lat?: number, lng?: number): Observable<any> {
-    const url = `/auth/login`;
-    const data = { email, password, ...(lat && { lat }), ...(lng && { lng }) };
-    let result = from(this.http.post(url, data)) as Observable<any>;
-    console.log(result);
-
-    return result;
-  }
 
   getMyProfile(): Observable<User> {
     console.log("auth-service: getMyProfile;");
-    const url = `/users/me`;
-
     return from(this.http
-      .get<UserResponse>(url))
+      .get<UserResponse>(`/users/me`))
       .pipe(
         map((response: { user: User; }) => response.user)
       );
@@ -53,68 +61,75 @@ export class AuthService {
 
   getProfile(id?: number): Observable<User> {
     let response: Observable<User>;
+    console.log("getProfile; Id->" + id ?? 'No_ID');
     if (id) {
-      console.log("auth-service: getProfile: " + id);
-      const url = `/users/${id}`;
-
       response = from(this.http
-        .get<UserResponse>(url))
+        .get<UserResponse>(`/users/${id}`))
         .pipe(
           map((response: { user: User; }) => response.user)
         );
     } else {
-      console.log("auth-service: getMyProfile;");
-      const url = `/users/me`;
-
       response = from(this.http
-        .get<UserResponse>(url))
+        .get<UserResponse>(`/users/me`))
         .pipe(
           map((response: { user: User; }) => response.user)
         );
     }
-    console.log(response);
-
     return response;
 
   }
 
-  /*
-  async loadLoguedUserData(): Promise<void> {
-    if (!this.getToken()) {
-      return;
-    }
-
-    const url = `/users/me`;
-    this.http.get(url).then((user)=>{
-    });
-
-    this.userData = {
-      email: user.email,
-      name: user.name,
-      avatar: user.avatar
-    };
-  }
-*/
   logout(): void {
     localStorage.removeItem(this.tokenKey);
-
+    this.logged = false;
+    this.loginChange$.next(false);
   }
 
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
     this.logged = true;
   }
+  removeToken(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
 
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
   }
 
-  isLogged(): boolean {
-    return (!!this.getToken() || this.logged) ?? false;
-  }
-  private loggedIn = new BehaviorSubject<boolean>(false);
+  isLogged(): Observable<boolean> {
+    if (!this.logged && !this.getToken()) {
+      //Both are not OK!
+      return of(false);
+    }
+    if (this.logged && this.getToken()) {
+      //Both are OK!
+      return of(true);
+    }
+    if (!this.logged && this.getToken()) {
+      //Logged = false, but token exist
+    }
+      return this.validateToken().pipe(
+        tap(valid => {
+          if (valid) {
+            this.logged = true;
+            this.loginChange$.next(true);
+          }
+        }),
+        catchError(error => {
+          this.removeToken();
+          return of(false);
+        })
+      );
 
-  get isLoggedIn() {
-    return this.loggedIn.asObservable();
   }
+
+  private validateToken(): Observable<boolean> {
+    return this.http.get<UserResponse>(`/auth/validate`)
+      .pipe(
+        map(response => true),
+        catchError(error => of(false))
+      );
+  }
+
 }

@@ -42,11 +42,12 @@ export class RestaurantDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private restaurantsService: RestaurantsService,
+    private authService: AuthService,
   ) {
 
-    this.address = this.restaurant.address;
-    this.latitude = this.restaurant.lat;
-    this.longitude = this.restaurant.lng;
+    this.address = '';
+    this.latitude = 0
+    this.longitude = 0;
 
   }
 
@@ -56,21 +57,26 @@ export class RestaurantDetailsComponent implements OnInit {
 
     //Load the restaurant data
     this.restaurantsService.getById(id).subscribe({
-      next: (rest) => (this.restaurant = rest),
+      next: (rest) =>{
+        this.restaurant = rest
+        this.address = rest.address;
+        this.latitude = rest.lat;
+        this.longitude = rest.lng;
+      },
       error: (error) => console.error(error),
       complete: () => console.log(`Restaurant ${id} loaded`),
     });
     if (this.restaurant.mine) {
       this.mine = true;
     } else {
-      /*
       //Check id user id match with creator
-      let me = (this.authService.getLoguedUserData())
-      if (this.restaurant.creator == me) {
-
-      }
-      */
+      this.authService.getMyProfile().subscribe(user => {
+        if (user.id === this.restaurant.creator) {
+          this.mine = true;
+        }
+      });
     }
+
     //Load the comments
     this.restaurantsService.getComments(id).subscribe({
       next: (comments) => (
@@ -84,12 +90,6 @@ export class RestaurantDetailsComponent implements OnInit {
       },
     });
   }
-
-  searchResult(result: SearchResult) {
-    this.address = result.address;
-    this.latitude = result.latitude;
-    this.longitude = result.longitude;
-    }
 
   deleteRestaurant(restaurantId: number) {
 

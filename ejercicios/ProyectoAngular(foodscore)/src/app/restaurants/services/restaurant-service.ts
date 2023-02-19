@@ -23,7 +23,7 @@ export class RestaurantsService {
   }
   getByUser(userId: number): Observable<Restaurant[]> {
     return this.http
-      .get<RestaurantsResponse>(`restaurants/users/${userId}`)
+      .get<RestaurantsResponse>(`restaurants/user/${userId}`)
       .pipe(map((r) => r.restaurants));
   }
 

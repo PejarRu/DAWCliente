@@ -11,15 +11,13 @@
     </ul>
     <ul class="navbar-nav">
       <li class="nav-item" *ngIf="!isLoggedIn">
-        <a class="nav-link" id="login" [routerLink]="'/auth/login'" [routerLinkActive]="['active']">Login</a>
+        <a class="nav-link" [routerLink]="'/auth/login'" [routerLinkActive]="['active']">Login</a>
       </li>
-      <li class="nav-item" *ngIf="!isLoggedIn">
-        <a class="nav-link" [routerLink]="'/users/me'"
-          [routerLinkActiveOptions]="{ exact: true }">My profile</a>
+      <li class="nav-item" *ngIf="isLoggedIn">
+        <a class="nav-link" [routerLink]="'/users/me'" [routerLinkActiveOptions]="{ exact: true }">My profile</a>
       </li>
-      <li class="nav-item" *ngIf="!isLoggedIn">
-        <a class="nav-link" [routerLink]="'logout'" (click)="onClickLogout()">Logout</a>
-
+      <li class="nav-item" *ngIf="isLoggedIn">
+        <a class="nav-link" (click)="onClickLogout()">Logout</a>
       </li>
     </ul>
 

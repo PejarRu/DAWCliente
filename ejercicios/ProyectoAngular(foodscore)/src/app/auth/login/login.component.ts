@@ -8,7 +8,10 @@ import { GoogleLoginDirective } from 'src/app/google-login/google-login.directiv
 import Swal from 'sweetalert2';
 import { AuthService } from '../auth-service';
 import { NgModel, FormsModule } from '@angular/forms';
-import { Position } from 'src/app/shared/intefaces/coordinates';
+interface Position{
+  lat: number,
+  lng: number,
+}
 @Component({
   selector: 'fs-login',
   standalone: true,
@@ -16,6 +19,7 @@ import { Position } from 'src/app/shared/intefaces/coordinates';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
+
 export class LoginPageComponent {
   icons = { faGoogle, faFacebook }
   errorMessage = '';
@@ -33,15 +37,8 @@ export class LoginPageComponent {
     this.authService.login(this.email, this.password, this.location.lat, this.location.lng)
       .subscribe(
         result => {
-          console.log('LoginOK. Redirecting...');
-
           // Login successful
-          this.authService.setToken(result.accessToken)
-
-
-          /*
-          this.authService.setLoguedUserData();
-          */
+          console.log('LoginOK. Redirecting...');
           this.router.navigate(['/restaurants']);
         },
         error => {

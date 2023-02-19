@@ -3,17 +3,16 @@
   </fs-restaurant-card>
 </div>
 <!-- MAP SECTION -->
-<arcgis-map [coords]="[longitude, latitude]">
-  <arcgis-marker
-  [coords]="[longitude, latitude]"
-  color="red"
-  ></arcgis-marker>
-  <arcgis-search
-  position="top-right"
-  (result)="searchResult($event)"
-  ></arcgis-search>
- </arcgis-map>
-
+<div class="card mt-4" *ngIf="restaurant.address">
+  <div class="card-header bg-success text-white" id="address">Restaurant's address</div>
+  <arcgis-map [coords]="[longitude, latitude]">
+    <arcgis-marker
+    [coords]="[longitude, latitude]"
+    color="red"
+    ></arcgis-marker>
+   </arcgis-map>
+   {{restaurant.address}}
+</div>
 <!-- CREATOR SECTION -->
 <div class="card mt-4" id="creatorCard" *ngIf="restaurant.creator">
   <div class="card-header bg-danger text-white">Restaurant's owner</div>

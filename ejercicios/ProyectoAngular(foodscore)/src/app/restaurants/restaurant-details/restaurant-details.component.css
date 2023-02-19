@@ -1,4 +1,4 @@
 arcgis-map {
   height: 400px;
-  width: 800px;
+  min-width: 800px;
  }

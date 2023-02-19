@@ -1,3 +1,6 @@
+<h2 class="mt-3" *ngIf="creatorName !== ''">
+  List of restaurants created by '{{creatorName}}'
+</h2>
 <nav class="navbar navbar-light bg-light justify-content-between mt-3 row">
   <ul class="nav nav-pills col-auto ms-3">
     <li class="nav-item">
@@ -8,10 +11,24 @@
     <input class="form-control" type="text" name="search" placeholder="Search" aria-label="Search"
       [(ngModel)]="search" />
   </form>
-</nav>
 
+</nav>
+<div class="col-auto ms-3 w-100" *ngIf="creatorId !== ''">
+  <a class=" active float-right" [routerLink]="restaurants">See all restaurants</a>
+</div>
 <div id="placesContainer" class="mb-4 mt-4 row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-  <fs-restaurant-card class="col" *ngFor="let restaurant of restaurants | restaurantFilter: onlyOpen:search"
+  <ng-container *ngIf="restaurants.length > 0; else noRestaurants">
+    <fs-restaurant-card class="col" *ngFor="let restaurant of restaurants | restaurantFilter: onlyOpen:search"
+      [restaurant]="restaurant" (deleted)="deleteRestaurant(restaurant)" [routerLink]="['/restaurants', restaurant.id]">
+    </fs-restaurant-card>
+  </ng-container>
+
+  <ng-template #noRestaurants>
+    <p>No restaurants found.</p>
+  </ng-template>
+  <!--
+    <fs-restaurant-card class="col" *ngFor="let restaurant of restaurants | restaurantFilter: onlyOpen:search"
     [restaurant]="restaurant" (deleted)="deleteRestaurant(restaurant)" [routerLink]="['/restaurants', restaurant.id]">
   </fs-restaurant-card>
+  -->
 </div>
