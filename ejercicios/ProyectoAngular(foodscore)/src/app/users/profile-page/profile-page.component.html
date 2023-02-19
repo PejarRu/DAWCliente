@@ -1,0 +1,19 @@
+<div class="container">
+  <div id="profile">
+    <div class="row mt-4">
+      <div class="col-3">
+        <img class="w-100" id="avatar" [src]="user.avatar" alt="">
+      </div>
+      <div class="col-9">
+        <h4>{{user.name}}</h4>
+        <h4>
+          <small class="text-muted">{{user.email}}</small>
+        </h4>
+        <p *ngIf="me">
+          <a [routerLink]="['users/edit']" routerLinkActive="router-link-active" class="btn btn-primary">Edit profile</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="mt-4" id="map"></div>
+</div>

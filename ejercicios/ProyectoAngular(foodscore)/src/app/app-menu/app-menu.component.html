@@ -14,7 +14,7 @@
         <a class="nav-link" id="login" [routerLink]="'/auth/login'" [routerLinkActive]="['active']">Login</a>
       </li>
       <li class="nav-item" *ngIf="!isLoggedIn">
-        <a class="nav-link" [routerLink]="'profile'" [routerLinkActive]="['active']"
+        <a class="nav-link" [routerLink]="'/users/me'"
           [routerLinkActiveOptions]="{ exact: true }">My profile</a>
       </li>
       <li class="nav-item" *ngIf="!isLoggedIn">

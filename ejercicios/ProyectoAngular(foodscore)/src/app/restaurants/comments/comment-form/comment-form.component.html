@@ -1,0 +1,29 @@
+
+<form class="mt-4" id="commentForm" (ngSubmit)="onSubmit()">
+  <h4>Write about this restaurant:</h4>
+  <div class="form-group">
+    <textarea class="form-control" name="comment" placeholder="Write an opinion" ></textarea>
+  </div>
+  <div id="stars">
+    <span *ngFor="let star of stars; let i = index" [attr.data-score]="i+1" (click)="onClickStar(i)" [ngClass]="{'active': i<rating}">
+      ☆
+    </span>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Send</button>
+</form>
+<!--
+  <form class="mt-4" id="commentForm">
+  <h4>Write about this restaurant:</h4>
+  <div class="form-group">
+    <textarea class="form-control" name="comment" placeholder="Write an opinion"></textarea>
+  </div>
+  <div id="stars">
+    <span data-score="1">☆</span>
+    <span data-score="2">☆</span>
+    <span data-score="3">☆</span>
+    <span data-score="4">☆</span>
+    <span data-score="5">☆</span>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">Send</button>
+</form>
+-->

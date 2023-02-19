@@ -1,0 +1,31 @@
+<form class="mt-4" id="commentForm" (submit)="addNewComment()">
+  <h4>Write about this restaurant:</h4>
+  <div class="form-group">
+    <textarea class="form-control"
+    name="comment"
+    [(ngModel)]="newComment.text" placeholder="Write an opinion">
+    </textarea>
+  </div>
+  <div class="m-auto d-flex justify-content-center" >
+    <span>{{newComment.stars}}/5 - </span>
+    <span (click)="newComment.stars=1" [ngClass]="{'active': newComment.stars>=1}">★</span>
+    <span (click)="newComment.stars=2" [ngClass]="{'active': newComment.stars>=2}">★</span>
+    <span (click)="newComment.stars=3" [ngClass]="{'active': newComment.stars>=3}">★</span>
+    <span (click)="newComment.stars=4" [ngClass]="{'active': newComment.stars>=4}">★</span>
+    <span (click)="newComment.stars=5" [ngClass]="{'active': newComment.stars>=5}">★</span>
+
+  </div>
+  <!--
+
+    <div class="m-auto d-flex justify-content-center">
+      <span data-score="1" (click)="newComment.stars=1" (mouseover)="highlightStars(1)" (mouseleave)="resetStars()">★</span>
+      <span data-score="2" (click)="newComment.stars=2" (mouseover)="highlightStars(2)" (mouseleave)="resetStars()">★</span>
+      <span data-score="3" (click)="newComment.stars=3" (mouseover)="highlightStars(3)" (mouseleave)="resetStars()">★</span>
+      <span data-score="4" (click)="newComment.stars=4" (mouseover)="highlightStars(4)" (mouseleave)="resetStars()">★</span>
+      <span data-score="5" (click)="newComment.stars=5" (mouseover)="highlightStars(5)" (mouseleave)="resetStars()">★</span>
+    </div>
+
+  -->
+  <button type="submit" class="btn btn-primary mt-3">Send</button>
+</form>
+``

@@ -1,4 +1,4 @@
-import { Restaurant } from "../../interfaces/restaurant";
+import { Restaurant } from "src/app/restaurants/interfaces/restaurant";
 import { Comment } from "../../interfaces/comment";
 import { User } from "../../interfaces/user";
 

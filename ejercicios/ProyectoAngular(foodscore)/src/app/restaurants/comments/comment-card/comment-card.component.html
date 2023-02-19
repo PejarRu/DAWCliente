@@ -1,0 +1,31 @@
+<li class="d-flex flex-row list-group-item p-2 pl-0 w-100" >
+
+  <div *ngIf="comment" class="">
+    <a [routerLink]="['/profile', comment.user.id]">
+      <img class="rounded-circle m-2" style="height: 80px; width: 80px;" [src]="comment.user.avatar" alt="">
+    </a>
+
+  </div>
+  <div *ngIf="comment" class="d-flex flex-column mx-4 w-100">
+    <div>
+      <strong>
+        <a [routerLink]="['/users', comment.user.id]">
+         a {{comment.user.name| titlecase}} - ({{comment.user.id}})
+        </a>:
+      </strong>
+      {{comment.text| titlecase}}
+    </div>
+    <div>
+      <span *ngFor="let _ of [].constructor(comment.stars); let i = index" class="active">★</span>
+      <span *ngFor="let _ of [].constructor(5 - comment.stars); let i = index">☆</span>
+      {{comment.stars}}/5
+    </div>
+    <small class="align-self-end">{{comment.date | date:'dd/MM/yyyy HH:mm:ss'}}</small>
+    <!--
+    <div *ngIf="isCommentAuthor(comment)">
+      <button class="btn btn-sm btn-primary me-2" (click)="editComment(comment)">Edit</button>
+      <button class="btn btn-sm btn-danger" (click)="deleteComment(comment)">Delete</button>
+    </div>
+  -->
+  </div>
+</li>

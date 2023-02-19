@@ -5,7 +5,10 @@ import { LogoutActivateGuard } from './guards/logout.guard';
 export const APP_ROUTES: Routes = [
   {
     path: 'auth',
-    loadChildren: () => import('./auth/auth-routes').then((m) => m.AUTH_ROUTES),
+    loadChildren: () =>
+      import('./auth/auth-routes').then(
+        (m) => m.AUTH_ROUTES
+      ),
     canActivate: [LogoutActivateGuard],
   },
   {
@@ -13,6 +16,14 @@ export const APP_ROUTES: Routes = [
     loadChildren: () =>
       import('./restaurants/restaurants-routes').then(
         (m) => m.RESTAURANTS_ROUTES
+      ),
+    canActivate: [LoginActivateGuard],
+  },
+  {
+    path: 'users',
+    loadChildren: () =>
+      import('./users/users-routes').then(
+        (m) => m.USERS_ROUTES
       ),
     canActivate: [LoginActivateGuard],
   },

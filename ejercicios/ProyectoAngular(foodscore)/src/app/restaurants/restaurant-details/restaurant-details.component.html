@@ -1,0 +1,54 @@
+<div class="row mt-4">
+  <fs-restaurant-card class="col" *ngIf="restaurant" [restaurant]="restaurant" (deleted)="deleteRestaurant(restaurant)">
+  </fs-restaurant-card>
+</div>
+<!-- MAP SECTION -->
+<arcgis-map [coords]="[longitude, latitude]">
+  <arcgis-marker
+  [coords]="[longitude, latitude]"
+  color="red"
+  ></arcgis-marker>
+  <arcgis-search
+  position="top-right"
+  (result)="searchResult($event)"
+  ></arcgis-search>
+ </arcgis-map>
+
+<!-- CREATOR SECTION -->
+<div class="card mt-4" id="creatorCard" *ngIf="restaurant.creator">
+  <div class="card-header bg-danger text-white">Restaurant's owner</div>
+  <div class="card-body d-flex flex-row">
+    <div>
+      <img class="rounded-circle me-3" style="width: 40px;" [src]="restaurant.creator.avatar" alt="">
+    </div>
+    <div>
+      <div><strong id="creatorName"></strong>{{restaurant.creator.name}}</div>
+      <div><small id="creatorEmail"></small>{{restaurant.creator.email}}</div>
+    </div>
+  </div>
+</div>
+
+<!--COMMENT SECTION -->
+
+<!--COMMENT SHOW PART -->
+<ul class="list-group mt-4 mb-4" *ngIf="comments.length>0">
+  <li class="list-group-item active">Restaurant comments</li>
+  <fs-comment-card *ngFor="let comment of comments"  [comment]="comment" class="w-100 pb-0">
+  </fs-comment-card>
+</ul>
+
+<!--COMMENT FORM PART -->
+<fs-comment-form (addComment)="addNewComment($event)"></fs-comment-form>
+
+
+<div class="mt-4 mb-4 d-flex justify-content-between">
+  <div>
+    <button type="button" class="btn btn-primary" (click)="goBack()">
+      Go back
+    </button>
+  </div>
+  <div *ngIf="restaurant && restaurant.mine">
+    <button type="button" class="btn btn-secondary ms-3"[routerLink]="['/restaurants', restaurant.id, 'edit']" routerLinkActive="router-link-active" >Edit</button>
+    <button type="button" class="btn btn-danger ms-3" (click)="deleteRestaurant(restaurant.id)">Delete</button>
+  </div>
+</div>

@@ -152,6 +152,7 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
           confirmButtonText: 'Continue'
         });
 
+
         this.router.navigate(['/restaurants']);
       }, (error: Error) => {
         console.error(error);
