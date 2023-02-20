@@ -7,18 +7,6 @@ import { ProfilePageComponent } from './profile-page/profile-page.component';
 import { UsersGuard } from './users-id.guard';
 
 export const USERS_ROUTES: Routes = [
-  /*
-  {
-    path: 'me', loadComponent: () =>
-    import('./profile-page/profile-page.component').then(
-      (m) => m.ProfilePageComponent
-    ),
-    canActivate: [LoginActivateGuard],
-    resolve: {
-      user: userResolver,
-    },
-  },
-  */
   {
     path: 'me',
     canDeactivate: [leavePageGuard],
@@ -29,11 +17,11 @@ export const USERS_ROUTES: Routes = [
   },
   {
     path: 'edit', loadComponent: () =>
-    import('./profile-page/profile-form/profile-form.component').then(
-      (m) => m.ProfileFormComponent
-    ),
+      import('./profile-page/profile-form/profile-form.component').then(
+        (m) => m.ProfileFormComponent
+      ),
     canActivate: [LoginActivateGuard, //UsersGuard
-  ],
+    ],
     canDeactivate: [leavePageGuard],
     resolve: {
       user: userResolver,
@@ -41,11 +29,11 @@ export const USERS_ROUTES: Routes = [
   },
   {
     path: ':id', loadComponent: () =>
-    import('./profile-page/profile-page.component').then(
-      (m) => m.ProfilePageComponent
-    ),
+      import('./profile-page/profile-page.component').then(
+        (m) => m.ProfilePageComponent
+      ),
     canActivate: [LoginActivateGuard, //UsersGuard
-  ],
+    ],
     resolve: {
       user: userResolver,
     },

@@ -27,7 +27,7 @@ export class FbLoginDirective implements OnInit {
   @HostListener('click') onClick(): void {
     this.loadService.login(this.scopes.join(',')).subscribe({
       next: resp => this.loginOk.emit(resp),
-      error: error => this.loginError.emit('Error with Facebook login!')
+      error: error => this.loginError.emit('Error with Facebook login! Try changing browsee')
     });
   }
 

@@ -20,6 +20,14 @@ export class RestaurantCardComponent {
   weekDay: number = new Date().getDay();
   constructor(private readonly router: Router, private readonly restaurantsService: RestaurantsService) { }
 
+  edit() {
+    let mine = false
+    if (!mine) {
+      return
+    }
+    this.router.navigate(['/restaurants', this.restaurant.id, 'edit']);
+
+  }
 
   delete() {
     let mine = false
@@ -28,8 +36,8 @@ export class RestaurantCardComponent {
     }
 
     let confirm = Swal.fire({
-      title: 'Do you really want to leave the page?',
-      text: 'Your restaurant data will be lost',
+      title: 'Do you really want delete this restaurant?',
+      text: 'Your restaurant will be deleted forever',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
@@ -39,10 +47,5 @@ export class RestaurantCardComponent {
       return
     }
     this.deleted.emit()
-    /*
-    this.restaurantsService.deleteRestaurants(this.restaurant.id as number).subscribe(
-      () => console.log('deleted Restaurant:' + this.restaurant.id)
-    );
-    */
   }
 }

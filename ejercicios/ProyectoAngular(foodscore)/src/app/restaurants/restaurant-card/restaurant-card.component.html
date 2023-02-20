@@ -6,6 +6,7 @@
     <button class="btn btn-danger btn-sm float-end" *ngIf="mine" (click)="delete()">
       Delete
     </button>
+    <button class="btn btn-link btn-sm float-end" *ngIf="mine" (click)="edit()">Edit</button>
     <h4 class="card-title"><a [routerLink]="['/restaurants', restaurant.id]">{{ restaurant.name }}</a></h4>
     <p class="card-text">{{ restaurant.description }}</p>
     <div class="card-text">
@@ -16,11 +17,8 @@
           <!-- days has the names of the days -->
         </span>
       </small>
-      <span
-        class="badge ms-2 bg-success"
-        *ngIf="restaurant.daysOpen.includes('' + this.weekDay); else elseClosed"
-        >Open</span
-      >
+      <span class="badge ms-2 bg-success"
+        *ngIf="restaurant.daysOpen.includes('' + this.weekDay); else elseClosed">Open</span>
       <ng-template #elseClosed>
         <span class="badge ms-2 bg-danger">Closed</span>
       </ng-template>
@@ -30,8 +28,19 @@
         <strong>Phone: </strong>{{ restaurant.phone }}
       </small>
     </div>
+    <div class="card-text">
+      <small class="text-muted">
+        <strong>Rating: </strong>
+        <span *ngFor="let i of [1, 2, 3, 4, 5]">
+          <span *ngIf="i <= restaurant.stars">★</span>
+          <span *ngIf="i > restaurant.stars">☆</span>
+        </span>
+        ({{restaurant.stars}}/5)
+      </small>
+    </div>
   </div>
   <div class="card-footer">
     <small class="text-muted">{{ restaurant.cuisine }}</small>
+    <small class="text-muted float-end">{{ restaurant.distance | number:'1.2-2' }}Km</small>
   </div>
 </div>

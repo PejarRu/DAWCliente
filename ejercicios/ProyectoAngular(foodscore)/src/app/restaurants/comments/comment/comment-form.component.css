@@ -1,0 +1,9 @@
+span:hover, span:hover ~ * {
+  color: #FFA500; /* Cambia el color a amarillo oscuro */
+  transform: scale(1.2); /* Aumenta el tamaño un poco */
+}
+
+span, *:not(:hover) {
+  color: black; /* Vuelve al color original */
+  transform: scale(1); /* Vuelve al tamaño original */
+}

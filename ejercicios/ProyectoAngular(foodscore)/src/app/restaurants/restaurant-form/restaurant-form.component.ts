@@ -37,7 +37,7 @@ import { SearchResult } from 'src/app/maps/interfaces/search-result';
 export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
   //Constants
   daysOpen: boolean[] = new Array(7).fill(true);
-  days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  readonly days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   //Emitters
   @Output() add = new EventEmitter<Restaurant>();
@@ -71,8 +71,22 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
   }
 
   ngOnInit(): void {
-    this.getGeolocation()
-    // ADD VALIDATORS TO EACH CONTROL ELEMENT
+    this.getGeolocation();
+    this.createFormControls();
+    this.createForm();
+    this.route.data.subscribe((data: { [x: string]: Restaurant; }) => {
+      if (data['restaurant']) {
+        this.editing = true;
+        this.newRestaurant = data['restaurant'];
+        this.loadRestaurantValues();
+      } else {
+        this.editing = false;
+        this.resetRestaurantForm();
+      }
+    });
+  }
+
+  createFormControls(): void {
     this.nameControl = this.fb.control('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
@@ -92,8 +106,9 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
     this.days.forEach((day) => {
       this.daysControl.push(this.fb.control(false));
     })
+  }
 
-    //BUILD FORM
+  createForm(): void {
     this.restaurantForm = this.fb.group({
       name: this.nameControl,
       description: this.descControl,
@@ -103,27 +118,17 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
       address: this.addressControl,
       image: this.imageControl,
     });
+  }
 
-
-    this.route.data.subscribe((data: { [x: string]: Restaurant; }) => {
-      if (data['restaurant']) {
-        this.editing = true;
-        this.newRestaurant = data['restaurant'];
-
-        // LOAD RESTAURANT VALUES IN EACH INPUT ELEMENT
-        this.restaurantForm.patchValue({
-          name: this.newRestaurant.name,
-          description: this.newRestaurant.description,
-          cuisine: this.newRestaurant.cuisine,
-          phone: this.newRestaurant.phone,
-          days: this.newRestaurant.daysOpen,
-          address: this.newRestaurant.address,
-          image: this.newRestaurant.image,
-        });
-      } else {
-        this.editing = false;
-        this.resetRestaurantForm();
-      }
+  loadRestaurantValues(): void {
+    this.restaurantForm.patchValue({
+      name: this.newRestaurant.name,
+      description: this.newRestaurant.description,
+      cuisine: this.newRestaurant.cuisine,
+      phone: this.newRestaurant.phone,
+      days: this.convertFromOpenDays(),
+      address: this.newRestaurant.address,
+      image: this.newRestaurant.image,
     });
   }
 
@@ -156,12 +161,12 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
       this.newRestaurant.address = this.addressControl.value;
       this.newRestaurant.daysOpen = this.daysControl.value;
     }
-    this.newRestaurant.daysOpen = this.daysOpen
-      .map((open, i) => (open ? String(i) : ''))
-      .filter((day) => day !== '');
+    this.convertOpenDays();
+
     console.log(this.newRestaurant);
 
     if (this.editing) {
+
       this.restaurantsService.edit(this.newRestaurant)
         .subscribe({
           next: () => {
@@ -198,6 +203,26 @@ export class RestaurantFormComponent implements OnInit, CanDeactivateComponent {
         },
       });
     }
+
+  }
+  convertOpenDays() {
+    const result = [];
+
+    for (let i = 0; i < this.daysControl.value.length; i++) {
+      if (this.daysControl.value[i]) {
+        result.push(i.toString());
+      }
+    }
+    this.newRestaurant.daysOpen = result;
+  }
+
+  convertFromOpenDays(): boolean[] {
+    console.log(this.newRestaurant.daysOpen);
+
+    let result = this.days.map(day => this.newRestaurant.daysOpen.includes(day));
+    console.log(result);
+
+    return result
   }
 
   changeImage(fileInput: HTMLInputElement) {

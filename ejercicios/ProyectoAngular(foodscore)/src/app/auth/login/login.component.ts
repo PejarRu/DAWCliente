@@ -8,7 +8,7 @@ import { GoogleLoginDirective } from 'src/app/google-login/google-login.directiv
 import Swal from 'sweetalert2';
 import { AuthService } from '../auth-service';
 import { NgModel, FormsModule } from '@angular/forms';
-interface Position{
+interface Position {
   lat: number,
   lng: number,
 }
@@ -22,7 +22,6 @@ interface Position{
 
 export class LoginPageComponent {
   icons = { faGoogle, faFacebook }
-  errorMessage = '';
   email: string;
   password: string;
   location: Position;
@@ -30,8 +29,6 @@ export class LoginPageComponent {
     this.email = '';
     this.password = '';
     this.location = { lat: 0, lng: 0 }
-    console.log('login page');
-
   }
 
   checkLogin() {
@@ -45,9 +42,18 @@ export class LoginPageComponent {
         },
         error => {
           console.log(error);
-
-          // Login failed
-          this.errorMessage = error.message.split(',').map((line: string) => line.charAt(0).toUpperCase() + line.slice(1)).join('<br>');
+          switch (error.status) {
+            case 401:
+              this.showError('Incorrect username or password.')
+              break;
+            case 403:
+              this.showError('Access denied.')
+              break;
+            default:
+              let errorMessage = error.message.split(',').map((line: string) => line.charAt(0).toUpperCase() + line.slice(1)).join('<br>');
+              this.showError('Access denied.' + errorMessage)
+              break;
+          }
         }
       );
 
@@ -59,8 +65,9 @@ export class LoginPageComponent {
     email: '',
     image: '',
   };
+
   loggedGoogle(user: gapi.auth2.GoogleUser) {
-    console.log('loggin via gogle');
+    console.log('loggin via google');
 
     // Send this token to your server for register / login
     console.log(user.getAuthResponse().id_token);
@@ -72,37 +79,6 @@ export class LoginPageComponent {
     this.userInfo.name = user.getBasicProfile().getName();
     this.userInfo.email = user.getBasicProfile().getEmail();
     this.userInfo.image = user.getBasicProfile().getImageUrl();
-
-    console.table(user.getBasicProfile())
-    console.table(user.getAuthResponse())
-
-    this.authService.setToken(user.getAuthResponse().access_token)
-
-    /*ç
-    //First we try register user. Then if user is registered, we Log In
-    this.authService.register({
-      name: this.userInfo.name,
-      email: this.userInfo.email,
-      password: this.userInfo.token,
-      avatar: this.userInfo.image,
-      lat: this.location.lat,
-      lng: this.location.lng,
-    }
-    )
-      .subscribe(
-        result => {
-          // Login successful
-          console.log('login correct');
-          this.router.navigate(['/restaurants']);
-
-        },
-        error => {
-          // Register failed
-          this.errorMessage = error;
-          //TODO: Implement login function
-        }
-      );
-      */
   }
 
   fbUserInfo = {
@@ -114,18 +90,24 @@ export class LoginPageComponent {
     this.fbUserInfo.token = resp.authResponse.accessToken;
     this.fbUserInfo.userId = resp.authResponse.userID;
     // Send this to your server
-    console.log(resp.authResponse.accessToken);
     this.authService.setToken(resp.authResponse.accessToken)
+    console.log(resp.authResponse.accessToken)
+      this.authService.isLogged()
+    //this.router.navigate(['/restaurants']);
+
+
   }
+
   showError(error: any) {
     console.error(error);
     Swal.fire({
       title: 'An error have ocurred!',
-      text: error.errorMessage,
+      text: error,
       icon: 'error',
       confirmButtonText: 'Ok'
     });
   }
+
   getLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -140,7 +122,7 @@ export class LoginPageComponent {
         }
       );
     } else {
-      console.error('Geolocation is not supported by this browser.');
+      this.showError('Geolocation is not supported by this browser.');
     }
   }
 }

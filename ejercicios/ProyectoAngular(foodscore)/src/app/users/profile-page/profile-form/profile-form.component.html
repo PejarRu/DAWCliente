@@ -1,1 +1,77 @@
-<p>profile-form works!</p>
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Edit Profile</h2>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <h3>Profile</h3>
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" class="form-control" formControlName="newName" id="name" placeholder="Name">
+          <div class="text-danger" *ngIf="newNameControl.invalid && (newNameControl.dirty || newNameControl.touched)">
+            <div *ngIf="newNameControl.errors.required">
+              Name is required
+            </div>
+            <div *ngIf="newNameControl.errors.pattern">
+              Name must contain only letters and spaces, and start with a letter
+            </div>
+            <div *ngIf="newNameControl.errors.minlength">
+              Name must be at least 3 characters long
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" class="form-control" formControlName="newEmail" id="email" placeholder="Email">
+          <div class="text-danger" class="text-danger"
+          *ngIf="newEmailControl.invalid && (newEmailControl.dirty || newEmailControl.touched)">
+          <div *ngIf="newEmailControl.errors.required || newEmailControl.errors.email">
+            An @email is required
+          </div>
+        </div>
+        </div>
+        <button type="submit" class="btn btn-primary m-1">Update</button>
+      </form>
+    </div>
+    <div class="col-md-6 mb-4">
+      <h3>Password</h3>
+      <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" formControlName="newPassword" id="password" placeholder="Password">
+        </div>
+        <div class="form-group">
+          <label for="repPassword">Repeat Password</label>
+          <input type="password" class="form-control" formControlName="repPassword" id="repPassword"
+            placeholder="Repetir Password">
+        </div>
+
+        <div class="text-danger" *ngIf="newPasswordControl.invalid && (newPasswordControl.dirty || newPasswordControl.touched)">
+          <div *ngIf="newPasswordControl.errors.required">
+            Password is required
+          </div>
+          <div *ngIf="newPasswordControl.errors.minlength">
+            Password must be at least 4 characters long
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary m-1">Update</button>
+      </form>
+    </div>
+    <div class="col-md-6 mb-4">
+      <h3>Avatar</h3>
+      <form [formGroup]="avatarForm" (ngSubmit)="onSubmitAvatar()">
+        <div class="form-group">
+          <label for="avatar">Avatar</label>
+          <input type="file" class="form-control" formControlName="newAvatar" id="avatar"
+            (change)="changeImage($event.target)">
+        </div>
+
+        <button type="submit" class="btn btn-primary m-1">Update</button>
+      </form>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="form-group" *ngIf="previewImage">
+        <img [src]="previewImage" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div>

@@ -58,13 +58,10 @@ export class ProfilePageComponent implements OnInit {
           icon: 'error',
           confirmButtonText: 'Ok'
         });
-        //this.router.navigate(['/restaurants']);
-
+        this.router.navigate(['/restaurants']);
       },
       complete: () => console.log('User ' + id ?? '' + 'loaded'),
     });
-    console.log(this.user);
-    console.log('me: ?');
   }
 }
 

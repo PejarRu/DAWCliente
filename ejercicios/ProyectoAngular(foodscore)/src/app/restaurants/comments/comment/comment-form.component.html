@@ -7,12 +7,12 @@
     </textarea>
   </div>
   <div class="m-auto d-flex justify-content-center" >
-    <span>{{newComment.stars}}/5 - </span>
-    <span (click)="newComment.stars=1" [ngClass]="{'active': newComment.stars>=1}">★</span>
-    <span (click)="newComment.stars=2" [ngClass]="{'active': newComment.stars>=2}">★</span>
-    <span (click)="newComment.stars=3" [ngClass]="{'active': newComment.stars>=3}">★</span>
-    <span (click)="newComment.stars=4" [ngClass]="{'active': newComment.stars>=4}">★</span>
+    {{newComment.stars}}/5 -
     <span (click)="newComment.stars=5" [ngClass]="{'active': newComment.stars>=5}">★</span>
+    <span (click)="newComment.stars=4" [ngClass]="{'active': newComment.stars>=4}">★</span>
+    <span (click)="newComment.stars=3" [ngClass]="{'active': newComment.stars>=3}">★</span>
+    <span (click)="newComment.stars=2" [ngClass]="{'active': newComment.stars>=2}">★</span>
+    <span (click)="newComment.stars=1" [ngClass]="{'active': newComment.stars>=1}">★</span>
 
   </div>
   <!--
@@ -26,5 +26,8 @@
     </div>
 
   -->
-  <button type="submit" class="btn btn-primary mt-3">Send</button>
+  <div class="d-flex justify-content-center">
+
+    <button type="submit" class="btn btn-primary mt-3">Send</button>
+  </div>
 </form>

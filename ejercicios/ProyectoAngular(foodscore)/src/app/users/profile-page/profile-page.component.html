@@ -10,7 +10,7 @@
           <small class="text-muted">{{user.email}}</small>
         </h4>
         <p *ngIf="me">
-          <a [routerLink]="['users/edit']" routerLinkActive="router-link-active" class="btn btn-primary">Edit profile</a>
+          <a [routerLink]="['/users/edit']" routerLinkActive="router-link-active" class="btn btn-primary">Edit profile</a>
         </p>
         <p>
           <a [routerLink]="['/restaurants']" [queryParams]="{ creator: user.id }">See owned restaurants</a>

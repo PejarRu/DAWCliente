@@ -38,11 +38,11 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
   // FORM OBJECT
   registerForm!: FormGroup;
   // CONTROL OBJECTS
-  nameControl!: FormControl<string>;
-  emailControl!: FormControl<string>;
+  public nameControl!: FormControl<string>;
+  public emailControl!: FormControl<string>;
   emailRepControl!: FormControl<string>;
-  passwordControl!: FormControl<string>;
-  avatarControl!: FormControl<string>;
+  public passwordControl!: FormControl<string>;
+  public avatarControl!: FormControl<string>;
   latControl!: FormControl<number>;
   lngControl!: FormControl<number>;
 
@@ -56,9 +56,16 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
 
   }
 
-  ngOnInit(): void {
 
-    // ADD VALIDATORS TO EACH CONTROL ELEMENT
+
+  ngOnInit(): void {
+    this.subscribeToRouteData();
+    this.createFormControls();
+    this.createForm();
+    this.getUserLocation();
+  }
+
+  private createFormControls(): void {
     this.nameControl = <FormControl<string>>this.fb.control('', [
       Validators.required,
       Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
@@ -79,8 +86,9 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
     this.avatarControl = <FormControl<string>>this.fb.control('', [Validators.required,]);
     this.latControl = <FormControl<number>>this.fb.control(0, [Validators.required,]);
     this.lngControl = <FormControl<number>>this.fb.control(0, [Validators.required,]);
+  }
 
-    //BUILD FORM
+  private createForm(): void {
     this.registerForm = this.fb.group({
       name: this.nameControl,
       email: this.emailControl,
@@ -89,42 +97,40 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
       avatar: this.avatarControl,
       lat: this.latControl,
       lng: this.lngControl,
-    }
-      /*, { validators:
-        emailMatchValidator,
-        //passwordMatchingValidator
-      }*/
-    );
+    });
+  }
 
-    //GET USER LOCATION
+  private subscribeToRouteData(): void {
+    this.route.data.subscribe((data: { [x: string]: User; }) => {
+      this.editing = !!data['restaurant'];
+      this.newUser = data['restaurant'] || {};
+      this.loadUserValues();
+    });
+  }
+
+  private getUserLocation(): void {
     navigator.geolocation.getCurrentPosition((position) => {
       this.registerForm.patchValue({
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       });
     });
+  }
 
-
-    this.route.data.subscribe((data: { [x: string]: User; }) => {
-      if (data['restaurant']) {
-        this.editing = true;
-        this.newUser = data['restaurant'];
-
-        // LOAD RESTAURANT VALUES IN EACH INPUT ELEMENT
-        this.registerForm.patchValue({
-          name: this.newUser.name,
-          email: this.newUser.email,
-          avatar: this.newUser.avatar,
-          password: this.newUser.password,
-          address: this.newUser.password,
-          lat: this.newUser.lat,
-          lng: this.newUser.lng,
-        });
-      } else {
-        this.editing = false;
-        this.resetRegisterForm();
-      }
-    });
+  private loadUserValues(): void {
+    if (this.editing) {
+      this.registerForm.patchValue({
+        name: this.newUser.name,
+        email: this.newUser.email,
+        avatar: this.newUser.avatar,
+        password: this.newUser.password,
+        address: this.newUser.password,
+        lat: this.newUser.lat,
+        lng: this.newUser.lng,
+      });
+    } else {
+      this.resetRegisterForm();
+    }
   }
 
   registerNewUser() {
@@ -143,7 +149,7 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
 
     this.authService.register(
       this.newUser
-      )
+    )
       .subscribe((result) => {
         this.saved = true
         Swal.fire({
@@ -172,8 +178,6 @@ export class RegisterPageComponent implements OnInit, CanDeactivateComponent {
       this.newUser.avatar = reader.result as string;
       this.previewImage = reader.result as string;
     });
-    console.log(reader.result);
-
   }
 
   getLocation() {

@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError, from, BehaviorSubject, map, ReplaySubject, catchError, of, tap } from 'rxjs';
 import { SERVER } from '../shared/constants';
 import { User } from '../interfaces/user';
-import { UserResponse, TokenResponse } from '../shared/intefaces/responses';
+import { UserResponse, TokenResponse, AvatarResponse } from '../shared/intefaces/responses';
 import { HttpClient } from '@angular/common/http';
+import { Route, Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,20 +14,11 @@ export class AuthService {
   private logged: boolean = false
   loginChange$ = new ReplaySubject<boolean>(1)
 
-  constructor(private readonly http: HttpClient) { }
-  /*
-    login(email: string, password: string, lat?: number, lng?: number): Observable<any> {
-      const data = { email, password, ...(lat && { lat }), ...(lng && { lng }) };
-      let result = from(this.http
-        .post(`/auth/login`, data)) as Observable<any>;
-      console.log(result);
+  constructor(private readonly http: HttpClient, private router: Router) { }
 
-      return result;
-    }
-    */
   login(email: string, password: string, lat?: number, lng?: number): Observable<void> {
     const data = { email, password, ...(lat && { lat }), ...(lng && { lng }) };
-    return this.http.post<TokenResponse>(`${this.apiUrl}/auth/login`, data)
+    return this.http.post<TokenResponse>(`/auth/login`, data)
       .pipe(
         map(response => {
           this.setToken(response.accessToken);
@@ -79,15 +71,50 @@ export class AuthService {
 
   }
 
+  updateProfile(email: string, name: string): Observable<boolean> {
+    const data = { email, name };
+    return this.http.put<boolean>(`/users/me`, data)
+      .pipe(
+        map(response => {
+          return response ? true : false;
+        }),
+        catchError((error: any) => throwError(error))
+      );
+  }
+
+  updateAvatar(newAvatar: string): Observable<AvatarResponse> {
+    const data = { avatar: newAvatar };
+    return this.http.put<AvatarResponse>(`/users/me/avatar`, data)
+      .pipe(
+        map(response => {
+          return response
+        }),
+        catchError((error: any) => throwError(error))
+      );
+  }
+
+  updatePassword(newPassword: string): Observable<boolean> {
+    const data = { password: newPassword };
+    return this.http.put<boolean>(`/users/me/password`, data)
+      .pipe(
+        map(response => {
+          return response ? true : false;
+        }),
+        catchError((error: any) => throwError(error))
+      );
+  }
+
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     this.logged = false;
     this.loginChange$.next(false);
+    this.router.navigate(['/restaurants']);
+
   }
 
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
-    this.logged = true;
   }
   removeToken(): void {
     localStorage.removeItem(this.tokenKey);
@@ -99,10 +126,14 @@ export class AuthService {
 
   isLogged(): Observable<boolean> {
     if (this.logged && this.getToken()) {
+      console.log('logged');
+
       //Both are OK!
       return of(true);
     }
     if (!this.logged && !this.getToken()) {
+      console.log('NOT logged');
+
       //Both are not OK!
       return of(false);
     }
@@ -110,18 +141,23 @@ export class AuthService {
     if (!this.logged && this.getToken()) {
       //Logged = false, but token exist
     }
-      return this.validateToken().pipe(
-        tap(valid => {
-          if (valid) {
-            this.logged = true;
-            this.loginChange$.next(true);
-          }
-        }),
-        catchError(error => {
-          this.removeToken();
-          return of(false);
-        })
-      );
+    return this.validateToken().pipe(
+      tap(valid => {
+        if (valid) {
+          console.log('logged VIA TOKEN');
+
+          this.logged = true;
+          this.loginChange$.next(true);
+        }
+      }),
+      catchError(error => {
+        console.log('NOT logged 2');
+        this.removeToken();
+
+
+        return of(false);
+      })
+    );
 
   }
 

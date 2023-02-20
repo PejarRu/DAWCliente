@@ -56,37 +56,45 @@ export class RestaurantDetailsComponent implements OnInit {
     const id = +this.route.snapshot.params['id'];
     this.route.data.subscribe((data) => (this.restaurant = data['restaurant']));
 
-    //Load the restaurant data
+    this.loadRestaurantData(id);
+    this.checkIfMine(id);
+    this.loadComments(id);
+  }
+
+  private loadRestaurantData(id: number): void {
     this.restaurantsService.getById(id).subscribe({
-      next: (rest) =>{
-        this.restaurant = rest
+      next: (rest) => {
+        this.restaurant = rest;
         this.address = rest.address;
         this.latitude = rest.lat;
         this.longitude = rest.lng;
       },
       error: (error) => console.error(error),
-      complete: () => console.log(`Restaurant ${id} loaded`),
+      complete: () => {
+        console.log(`Restaurant ${id} loaded:`)
+        console.log(this.restaurant)
+    },
     });
+  }
+
+  private checkIfMine(id: number): void {
     if (this.restaurant.mine) {
       this.mine = true;
     } else {
-      //Check id user id match with creator
       this.authService.getMyProfile().subscribe(user => {
         if (user.id === this.restaurant.creator) {
           this.mine = true;
         }
       });
     }
+  }
 
-    //Load the comments
+  private loadComments(id: number): void {
     this.restaurantsService.getComments(id).subscribe({
-      next: (comments) => (
-        this.comments = comments
-      ),
+      next: (comments) => (this.comments = comments),
       error: (error) => console.error(error),
       complete: () => {
-
-        console.log(`Comments from restaurant ${id} loaded`)
+        console.log(`Comments from restaurant ${id}:`);
         console.log(this.comments);
       },
     });
@@ -95,7 +103,17 @@ export class RestaurantDetailsComponent implements OnInit {
   }
 
   deleteRestaurant(restaurantId: number) {
-
+    let confirm = Swal.fire({
+      title: 'Do you really want delete this restaurant?',
+      text: 'Your restaurant will be deleted forever',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it'
+    });
+    if (!confirm) {
+      return
+    }
     this.restaurantsService.delete(restaurantId).subscribe(
       () => { },
       (error) => console.log(error)
@@ -103,18 +121,12 @@ export class RestaurantDetailsComponent implements OnInit {
     this.goBack();
   }
 
-  editRestaurant(restaurant: Restaurant) {
-    alert('Redirect to resturants/id/edit')
-    this.router.navigate(['/restaurants', this.restaurant.id, 'edit']);
-
-    /* this.restaurantsService.editRestaurant(restaurant).subscribe(
-       () => { },
-       (error) => console.log(error)
-     );
-    */
+  editRestaurant(restaurantId: number) {
+    this.router.navigate(['/restaurants', restaurantId, 'edit']);
   }
+
   addNewComment(newComment: Comment) {
-    if(this.comented) {
+    if (this.comented) {
       Swal.fire({
         title: 'You have alredy commented on this restaurant',
         text: 'Only 1 comment restaurant allowed',
@@ -124,34 +136,29 @@ export class RestaurantDetailsComponent implements OnInit {
       return
 
     }
-    newComment.date = new Date().toString();
-    newComment.restaurant = this.restaurant.id;
-    /*
-    //Find my user data
-    newComment.user = this.authService.getLoguedUserData() as unknown as User;
-    */
+    if (!newComment.stars || newComment.stars <= 0) {
+      Swal.fire({
+        title: 'No rating',
+        text: 'You must set a rating',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      })
+      return
+
+    }
+
     console.table(newComment);
-    window.confirm('Log console. before Continue...')
-    this.restaurantsService.addComment(this.restaurant.id as number, newComment).subscribe(
-      () => {
+    let id = this.restaurant.id as number;
+    this.restaurantsService.addComment(id, newComment)
+      .subscribe((result) => {
         console.log('posted comment on restaurant: ' + this.restaurant.id);
-        this.comments.push(newComment);
+        this.comments.push(result);
+      }, (error: Error) => {
+        console.error(error);
       });
   }
 
   goBack() {
     this.router.navigate(['/restaurants']);
   }
-
-  /*
- deleteComment(comment: Comment) {
-   const id = Number(comment.id);
-
-   this.restaurantsService.deleteComment(id).subscribe(
-     () => {},
-     (error: any) => console.log(error)
-   );
-   this.goBack();
- }
-*/
 }

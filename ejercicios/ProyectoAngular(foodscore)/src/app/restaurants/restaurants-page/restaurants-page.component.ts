@@ -62,7 +62,9 @@ export class RestaurantsPageComponent implements OnInit {
         this.restaurants = rests;
       },
       error: (error) => console.error(error),
-      complete: () => console.log('Restaurants loaded'),
+      complete: () =>{
+         console.log('All restaurants loaded')
+        },
     });
   }
 

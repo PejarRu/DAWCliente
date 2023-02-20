@@ -36,6 +36,7 @@ export class AppMenuComponent {
     console.log('Logged out');
 
     this.authService.logout()
+
   }
 
 }

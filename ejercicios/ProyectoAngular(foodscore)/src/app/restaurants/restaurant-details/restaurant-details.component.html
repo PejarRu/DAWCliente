@@ -52,7 +52,7 @@
     <!--
       <a type="button" class="btn btn-secondary ms-3" [routerLink]="['/restaurants/'+ restaurant.id, 'edit']" routerLinkActive="router-link-active" >Edit</a>
     -->
-    <a type="button" class="btn btn-secondary ms-3" [routerLink]="['/restaurants', restaurant.id, 'edit']">Edit</a>
+    <a type="button" class="btn btn-secondary ms-3" (click)="editRestaurant(restaurant.id)" [routerLink]="['/restaurants', restaurant.id, 'edit']">Edit</a>
     <button type="button" class="btn btn-danger ms-3" (click)="deleteRestaurant(restaurant.id)">Delete</button>
   </div>
 </div>
